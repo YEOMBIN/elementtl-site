@@ -163,22 +163,72 @@
   if (firstTab) firstTab.click();
 
   /* ---------- Carousels ---------- */
+  /* Infinite, centered carousel: [clones][originals][clones]; the active card sits at the viewport center
+     and the index is silently re-based into the middle set after each move. */
   document.querySelectorAll('[data-carousel]').forEach(root => {
-    const track = root.querySelector('.carousel');
+    const view = root.querySelector('.carousel');
+    const cards = [...view.querySelectorAll('.ncard')];
+    const N = cards.length;
+    if (!N) return;
     const bar = root.querySelector('.car-bar i');
-    const step = () => (track.querySelector('.ncard')?.offsetWidth || 300) + 32;
-    root.querySelector('[data-prev]')?.addEventListener('click', () => track.scrollBy({ left: -step() }));
-    root.querySelector('[data-next]')?.addEventListener('click', () => track.scrollBy({ left: step() }));
-    const upd = () => {
-      if (!bar) return;
-      const max = track.scrollWidth - track.clientWidth;
-      const ratio = track.clientWidth / track.scrollWidth;
-      bar.style.width = ratio * 100 + '%';
-      bar.style.left = (max > 0 ? track.scrollLeft / max : 0) * (100 - ratio * 100) + '%';
-    };
-    track.addEventListener('scroll', upd, { passive: true });
-    window.addEventListener('resize', upd);
-    upd();
+    const track = document.createElement('div');
+    track.className = 'carousel__track';
+    const clone = c => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); k.tabIndex = -1; return k; };
+    cards.forEach(c => track.appendChild(clone(c)));
+    cards.forEach(c => track.appendChild(c));
+    cards.forEach(c => track.appendChild(clone(c)));
+    view.appendChild(track);
+    const all = [...track.children];
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let i = N + (N > 1 ? 1 : 0); // Figma: second item (first blog post) starts centered
+    let dragX = 0;
+
+    const pitch = () => all[0].offsetWidth + parseFloat(getComputedStyle(track).columnGap || 0);
+    const offset = () => view.clientWidth / 2 - all[0].offsetWidth / 2 - i * pitch() + dragX;
+    function render(animate = true) {
+      track.classList.toggle('no-anim', !animate);
+      track.style.transform = `translate3d(${offset()}px,0,0)`;
+      all.forEach((c, k) => c.classList.toggle('is-center', k === i));
+      if (bar) { const pos = ((i - N) % N + N) % N; bar.style.width = 100 / N + '%'; bar.style.left = pos * 100 / N + '%'; }
+    }
+    function rebase() {
+      if (i < 2 * N && i >= N) return;
+      i = ((i - N) % N + N) % N + N;
+      render(false);
+      void track.offsetWidth; // commit the jump before the next animated move
+    }
+    function go(d) { rebase(); i += d; render(true); }
+    track.addEventListener('transitionend', e => { if (e.target === track) rebase(); });
+    root.querySelector('[data-prev]')?.addEventListener('click', () => go(-1));
+    root.querySelector('[data-next]')?.addEventListener('click', () => go(1));
+
+    // Drag / swipe
+    let startX = null, moved = false;
+    view.addEventListener('pointerdown', e => { if (e.button !== 0) return; startX = e.clientX; moved = false; });
+    window.addEventListener('pointermove', e => {
+      if (startX === null) return;
+      dragX = e.clientX - startX;
+      if (Math.abs(dragX) > 6 && !moved) { moved = true; view.classList.add('is-dragging'); }
+      if (moved) render(false);
+    });
+    window.addEventListener('pointerup', () => {
+      if (startX === null) return;
+      const d = dragX; startX = null; dragX = 0; view.classList.remove('is-dragging');
+      if (Math.abs(d) > 60) go(d < 0 ? 1 : -1); else render(true);
+    });
+    view.addEventListener('click', e => { if (moved) { e.preventDefault(); moved = false; } }, true);
+
+    // Slow autoplay; pauses while hovered / focused / dragged, off for reduced motion
+    let timer;
+    const play = () => { if (reduce) return; clearInterval(timer); timer = setInterval(() => { if (startX === null) go(1); }, 5000); };
+    const stop = () => clearInterval(timer);
+    root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', play);
+    root.addEventListener('focusin', stop); root.addEventListener('focusout', play);
+    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : play()));
+
+    window.addEventListener('resize', () => render(false));
+    render(false);
+    play();
   });
 
   /* ---------- Clinical case carousel dots (tablet / mobile) ---------- */

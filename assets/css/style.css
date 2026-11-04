@@ -85,6 +85,9 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .section { position: relative; padding: var(--section-y) 0; overflow: hidden; }
 .section--dark { background: var(--mid-900); }
 .section--deep { background: var(--mid-950); }
+/* Section background video (Figma S04: video fill 15%, Hard Light over the section color) */
+.has-bgvideo { isolation: isolate; }
+.bgvideo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.15; mix-blend-mode: hard-light; pointer-events: none; }
 .sheet { position: relative; background: var(--white); color: var(--ink-900); border-radius: var(--sheet-radius); z-index: 1; }
 /* Dark sections slide under the rounded corners of white sheets */
 .section + .sheet { margin-top: calc(var(--sheet-radius) * -1); }
@@ -363,9 +366,12 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* NEWS carousel */
 .news { background: var(--paper); }
-.carousel { display: flex; gap: 32px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth; padding: 16px var(--side) 48px; scroll-padding: 0 var(--side); scrollbar-width: none; }
-.carousel::-webkit-scrollbar { display: none; }
-.ncard { flex: 0 0 400px; display: flex; flex-direction: column; height: 470px; border-radius: 28px; overflow: hidden; background: var(--white); color: var(--ink-900); scroll-snap-align: start; box-shadow: 0 2px 6px rgba(11, 21, 48, 0.05), 0 12px 28px -4px rgba(11, 21, 48, 0.07); transition: background 0.45s var(--ease), color 0.45s var(--ease), transform 0.45s var(--ease), box-shadow 0.45s var(--ease); }
+/* Infinite, centered: main.js wraps the cards in a track (with clones on both sides) and centers the active one */
+.carousel { --car-gap: 32px; position: relative; overflow: hidden; padding: 16px 0 48px; touch-action: pan-y; cursor: grab; }
+.carousel.is-dragging { cursor: grabbing; }
+.carousel__track { display: flex; gap: var(--car-gap); width: max-content; transition: transform 0.8s var(--ease); will-change: transform; }
+.carousel.is-dragging .carousel__track, .carousel__track.no-anim { transition: none; }
+.ncard { flex: 0 0 400px; display: flex; flex-direction: column; height: 470px; border-radius: 28px; overflow: hidden; background: var(--white); color: var(--ink-900); user-select: none; -webkit-user-drag: none; box-shadow: 0 2px 6px rgba(11, 21, 48, 0.05), 0 12px 28px -4px rgba(11, 21, 48, 0.07); transition: background 0.45s var(--ease), color 0.45s var(--ease), transform 0.45s var(--ease), box-shadow 0.45s var(--ease); }
 .ncard__txt { position: relative; padding: 36px 36px 0; height: 220px; }
 .ncard__cat { font-family: var(--font-en); font-size: 12px; font-weight: 600; letter-spacing: 0.04em; color: var(--blue-500); }
 .ncard h3 { margin-top: 14px; font-size: 20px; font-weight: 600; line-height: 1.45; }
@@ -375,10 +381,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .ncard__img { flex: 1; overflow: hidden; background: var(--white); }
 .ncard__img img { width: 100%; height: 100%; object-fit: cover; }
 .ncard__img--contain img { object-fit: contain; }
-.ncard:hover { background: var(--navy-900); color: var(--white); transform: translateY(-12px); box-shadow: 0 24px 48px -4px rgba(11, 21, 48, 0.24); }
-.ncard:hover .ncard__cat { color: var(--blue-200); }
-.ncard:hover time { color: var(--white-60); }
-.ncard:hover .ncard__go { opacity: 1; }
+.ncard img { pointer-events: none; }
+/* Active (centered) card = Figma "Image Active"; hover lifts any card */
+.ncard.is-center, .ncard:hover { background: var(--navy-900); color: var(--white); }
+.ncard:hover { transform: translateY(-12px); box-shadow: 0 24px 48px -4px rgba(11, 21, 48, 0.24); }
+.ncard.is-center .ncard__cat, .ncard:hover .ncard__cat { color: var(--blue-200); }
+.ncard.is-center time, .ncard:hover time { color: var(--white-60); }
+.ncard.is-center .ncard__go, .ncard:hover .ncard__go { opacity: 1; }
 .car-ctl { display: flex; justify-content: space-between; align-items: center; }
 .car-nav { display: flex; align-items: center; gap: 32px; margin: 0 auto; }
 .car-btn { width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--line); background: var(--white); color: var(--navy-900); display: flex; align-items: center; justify-content: center; }
@@ -391,7 +400,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .news .sec-head .car-all { position: static; align-self: center; margin-top: 20px; }
 @media (max-width: 1024px) { .ncard { flex-basis: 340px; } .car-bar { width: 160px; } }
 @media (max-width: 640px) {
-  .carousel { gap: 14px; padding-bottom: 36px; }
+  .carousel { --car-gap: 14px; padding-bottom: 36px; }
   .ncard { flex-basis: 300px; height: 380px; }
   .ncard__txt { padding: 28px 24px 0; height: 180px; }
   .ncard h3 { font-size: 17px; }
@@ -802,8 +811,22 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .ccard.is-active .acts a { border-color: var(--white-40); }
 .map { position: relative; min-height: 640px; border-radius: 32px; background-color: var(--paper); background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px); background-size: 68px 64px; overflow: hidden; }
 .map__label { position: absolute; top: 24px; left: 24px; padding: 8px 14px; border-radius: 999px; background: var(--white); font-size: 13px; color: var(--ink-600); }
-.map__pin { position: absolute; width: 28px; height: 28px; color: var(--navy-900); }
-.map__pin.on { color: var(--blue-500); }
+.map__canvas { position: absolute; inset: 0; z-index: 0; border-radius: inherit; background: var(--paper); }
+.map__label, .map__zoom { z-index: 1; }
+.clinic-pin { background: none; border: 0; filter: drop-shadow(0 2px 3px rgba(11, 21, 48, 0.25)); }
+.map .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 24px rgba(11, 21, 48, 0.16); }
+.map .leaflet-popup-content { margin: 10px 14px; font-family: var(--font-kr); font-size: 13px; line-height: 1.5; color: var(--ink-900); }
+.map .leaflet-popup-content b { display: block; font-size: 14px; font-weight: 600; }
+.map .leaflet-popup-content span { color: var(--ink-400); }
+.map .leaflet-control-attribution { font-size: 10px; }
+.ccard { cursor: pointer; transition: background 0.3s var(--ease), color 0.3s var(--ease); }
+.clinic-empty { padding: 40px 0; text-align: center; font-size: 14px; color: var(--ink-400); }
+.ccard p span { display: block; }
+/* Map desaturated slightly so the pins and brand colors stay dominant */
+.map .leaflet-tile-pane { filter: grayscale(0.85) brightness(1.04); }
+/* Tablet / mobile: map above the (long) clinic list */
+@media (max-width: 1024px) { .clinic-split .map { order: -1; } }
+@media (max-width: 640px) { .ccard p span { display: inline; } .ccard p span + span::before { content: " · "; } }
 .clinic-cta { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-top: 56px; padding: 36px 40px 36px 48px; border-radius: 32px; background: var(--navy-900); color: var(--white); }
 .clinic-cta p { margin-top: 6px; font-size: 14px; color: var(--white-60); }
 @media (max-width: 1024px) { .clinic-split { grid-template-columns: 1fr; } .clinic-list { display: grid; grid-template-columns: 1fr 1fr; } .map { min-height: 420px; } .clinic-filter { flex-direction: column; align-items: stretch; } }
@@ -898,7 +921,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .map__zoom { position: absolute; top: 24px; right: 24px; display: flex; flex-direction: column; border-radius: 12px; background: var(--white); box-shadow: 0 2px 8px rgba(11, 21, 48, 0.08); overflow: hidden; }
 .map__zoom button { width: 36px; height: 36px; font-size: 18px; font-weight: 500; color: var(--ink-900); }
 .map__zoom button + button { border-top: 1px solid var(--line); }
-@media (min-width: 1025px) { .ccard { padding: 28px; } .ccard p { margin-top: 14px; line-height: 2; } .ccard .acts { margin-top: 18px; } }
+@media (min-width: 1025px) { .ccard { padding: 28px; } .ccard p { margin-top: 14px; line-height: 2; } .ccard .acts { margin-top: 18px; } .clinic-list { max-height: 640px; overflow-y: auto; padding-right: 4px; scrollbar-width: thin; } }
 @media (max-width: 640px) { .map__zoom { top: 16px; right: 16px; } .map__zoom button { width: 32px; height: 32px; } }
 @media (min-width: 1025px) {
   /* Figma PC: sub visual 480 tall without anchor tabs; footer mark sits lower, copyright line at its base */

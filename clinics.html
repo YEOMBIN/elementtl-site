@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body data-page="clinics">
@@ -34,19 +35,11 @@
           <form class="search" role="search"><input type="search" placeholder="병원명 · 지역 검색" style="border-left:0"><button aria-label="검색"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button></form>
         </div>
         <div class="clinic-split">
-          <div class="clinic-list">
-            <article class="ccard is-active"><div class="ccard__top"><h3>[병원명]</h3><span>지역</span></div><p>주소 [동의 후 입력]<br>전화 [동의 후 입력]</p><div class="acts"><a href="#">길찾기</a><a href="#">병원 블로그</a></div></article>
-            <article class="ccard"><div class="ccard__top"><h3>[병원명]</h3><span>지역</span></div><p>주소 [동의 후 입력]<br>전화 [동의 후 입력]</p><div class="acts"><a href="#">길찾기</a><a href="#">병원 블로그</a></div></article>
-            <article class="ccard"><div class="ccard__top"><h3>[병원명]</h3><span>지역</span></div><p>주소 [동의 후 입력]<br>전화 [동의 후 입력]</p><div class="acts"><a href="#">길찾기</a><a href="#">병원 블로그</a></div></article>
-            <article class="ccard"><div class="ccard__top"><h3>[병원명]</h3><span>지역</span></div><p>주소 [동의 후 입력]<br>전화 [동의 후 입력]</p><div class="acts"><a href="#">길찾기</a><a href="#">병원 블로그</a></div></article>
-          </div>
-          <div class="map" aria-label="지도 영역">
-            <span class="map__label">지도 API 영역 (카카오 / 네이버 지도)</span><div class="map__zoom" aria-hidden="true"><button type="button">+</button><button type="button">−</button></div>
-            <svg class="map__pin on" style="left:42%;top:34%" viewBox="0 0 16 16"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="currentColor"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>
-            <svg class="map__pin" style="left:58%;top:46%" viewBox="0 0 16 16"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="currentColor"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>
-            <svg class="map__pin" style="left:34%;top:58%" viewBox="0 0 16 16"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="currentColor"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>
-            <svg class="map__pin" style="left:72%;top:28%" viewBox="0 0 16 16"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="currentColor"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>
-            <svg class="map__pin" style="left:64%;top:72%" viewBox="0 0 16 16"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="currentColor"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>
+          <div class="clinic-list" aria-live="polite"><!-- assets/js/clinics.js 의 병원 데이터로 채워집니다 --></div>
+          <div class="map">
+            <div id="clinic-map" class="map__canvas" aria-label="도입 병원 지도"></div>
+            <span class="map__label">지역 기준 위치 · 정확한 주소는 확정 후 반영</span>
+            <div class="map__zoom"><button type="button" data-zoom="in" aria-label="지도 확대">+</button><button type="button" data-zoom="out" aria-label="지도 축소">−</button></div>
           </div>
         </div>
         <div class="clinic-cta">
@@ -57,6 +50,8 @@
     </section>
   </main>
   <footer id="site-footer"></footer>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="assets/js/clinics.js"></script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
