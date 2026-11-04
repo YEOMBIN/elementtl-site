@@ -27,7 +27,7 @@
   const PIN = { '서울': [240, 140, 'top'], '인천': [196, 154, 'left'], '경기': [294, 176, 'right'], '대전': [282, 283, 'right'], '울산': [458, 381, 'left'] };
   const M = window.KOREA_MAP, NS = 'http://www.w3.org/2000/svg';
   const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
-  const svg = el('svg', { viewBox: '0 0 ' + M.w + ' ' + M.h, class: 'kmap', role: 'group', 'aria-label': '대한민국 도입 병원 분포 지도' });
+  const svg = el('svg', { viewBox: '6 6 624 660', class: 'kmap', role: 'group', 'aria-label': '대한민국 도입 병원 분포 지도' });
   const regs = {}, pins = {};
   Object.entries(M.r).forEach(([code, r]) => {
     const g = Object.keys(REG).find(k => REG[k] === code);
@@ -47,6 +47,36 @@
   });
   Object.values(pins).forEach((p, i) => p.pg.style.setProperty('--i', i));
   mapBox.appendChild(svg);
+
+  /* 지역 선택 시 해당 지역 중심으로 확대(viewBox 보간, ease-in-out). 핀은 확대해도 같은 크기로 유지 */
+  const FULL = [6, 6, 624, 660], posOf = {};
+  Object.entries(PIN).forEach(([g, [x, y]]) => { posOf[g] = [x, y]; });
+  let cur = FULL.slice(), tween = 0;
+  const reduceM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const fit = b => { const cw = svg.clientWidth || 1, ch = svg.clientHeight || 1, r = cw / ch; let [x, y, w, h] = b; const cx = x + w / 2, cy = y + h / 2; if (w / h < r) w = h * r; else h = w / r; return [cx - w / 2, cy - h / 2, w, h]; };
+  const sc = b => { const cw = svg.clientWidth || 1, ch = svg.clientHeight || 1; return Math.min(cw / b[2], ch / b[3]); };
+  const render = b => {
+    cur = b; svg.setAttribute('viewBox', b.join(' '));
+    const k = sc(fit(FULL)) / sc(b);
+    Object.entries(pins).forEach(([g, p]) => p.pg.setAttribute('transform', 'translate(' + posOf[g][0] + ' ' + posOf[g][1] + ') scale(' + k + ')'));
+  };
+  const targetOf = g => {
+    if (!regs[g]) return fit(FULL);
+    const bb = regs[g].getBBox(), p = posOf[g], pad = 46;
+    let x0 = Math.min(bb.x, p[0] - 30), y0 = Math.min(bb.y, p[1] - 40), x1 = Math.max(bb.x + bb.width, p[0] + 90), y1 = Math.max(bb.y + bb.height, p[1] + 30);
+    let w = Math.max(x1 - x0 + pad * 2, 240), h = Math.max(y1 - y0 + pad * 2, 240);
+    return fit([(x0 + x1) / 2 - w / 2, (y0 + y1) / 2 - h / 2, w, h]);
+  };
+  function zoomTo(g) {
+    cancelAnimationFrame(tween);
+    const from = cur.slice(), to = targetOf(g);
+    if (reduceM) return render(to);
+    const t0 = performance.now(), D = 800;
+    const step = now => { let t = Math.min(1, (now - t0) / D); t = t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; render(from.map((v, i) => v + (to[i] - v) * t)); if (t < 1) tween = requestAnimationFrame(step); };
+    tween = requestAnimationFrame(step);
+  }
+  render(fit(FULL));
+  addEventListener('resize', () => { cancelAnimationFrame(tween); render(targetOf(group)); });
   if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { mapBox.classList.add('is-in'); io.disconnect(); } }), { threshold: 0.25 }); io.observe(mapBox); } else mapBox.classList.add('is-in');
 
   let active = -1;
@@ -99,6 +129,7 @@
   }
   function pickGroup(g) {
     group = g;
+    zoomTo(g);
     chips.forEach(c => c.classList.toggle('is-active', c.textContent.trim() === g));
     apply();
   }

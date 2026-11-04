@@ -1080,7 +1080,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* Clinics: nationwide SVG map (map left / list right on PC, stacked on tablet · mobile) */
 .clinic-split .map { order: -1; min-height: 0; background: var(--paper); background-image: none; }
-.clinic-split .map__canvas { position: static; background: none; padding: 56px 24px 24px; }
+.clinic-split .map__canvas { position: static; background: none; padding: 40px 8px 8px; }
 .map .map__label { top: 20px; left: 20px; border: 1px solid var(--line); }
 .kmap { display: block; width: 100%; height: auto; max-height: 720px; margin: 0 auto; overflow: visible; }
 .kmap__r { fill: #E9EDF5; stroke: var(--white); stroke-width: 1.2; stroke-linejoin: round; transition: fill 0.4s var(--ease); }
@@ -1100,8 +1100,15 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .kmap__pin.is-sel .kmap__dot { fill: var(--white); stroke: var(--blue-500); }
 .kmap__pin.is-sel .kmap__lbl { fill: var(--white); stroke: var(--navy-900); }
 @media (min-width: 1025px) {
-  .clinic-split { grid-template-columns: minmax(0, 1fr) 460px; align-items: start; }
-  .clinic-split .map { position: sticky; top: 110px; }
+  .clinic-split { grid-template-columns: minmax(0, 1fr) 460px; height: 700px; align-items: stretch; }
+  .clinic-split .map, .clinic-split .clinic-list { height: 100%; min-height: 0; border: 1px solid var(--line); border-radius: 32px; }
+  .clinic-split .map { position: relative; }
+  .clinic-split .map__canvas { height: 100%; padding: 12px; }
+  .clinic-split .kmap { height: 100%; max-height: none; }
+  .clinic-split .clinic-list { max-height: none; overflow-y: auto; gap: 10px; padding: 12px; scrollbar-width: thin; }
+  .clinic-split .ccard { flex: none; padding: 16px 22px; border-radius: 20px; }
+  .clinic-split .ccard p { margin-top: 6px; line-height: 1.6; }
+  .clinic-split .ccard .acts { margin-top: 10px; }
 }
 @media (max-width: 1024px) { .map { min-height: 0; } }
 @media (max-width: 640px) { .clinic-split .map__canvas { padding: 48px 8px 16px; } .kmap__lbl { font-size: 22px; stroke-width: 5px; } .kmap__ring { r: 15; } }
