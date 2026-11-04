@@ -21,7 +21,7 @@
     header.innerHTML = `
       <div class="hd">
         <a class="logo" href="index.html" aria-label="엘레멘트티엘 홈"><img src="assets/img/logo-white.png" alt="엘레멘트티엘"></a>
-        <ul class="gnb">${MENU.map(m => `<li><a href="${m.href}" class="${m.key === active ? 'is-active' : ''}">${m.label}</a></li>`).join('')}</ul>
+        <ul class="gnb">${MENU.map(m => `<li><a href="${m.href}" class="${m.key === active ? 'is-active' : ''}">${m.label}</a><div class="gnb__sub">${m.sub.map(([l, h]) => `<a href="${h}">${l}</a>`).join('')}</div></li>`).join('')}</ul>
         <div class="util">
           <div class="lang"><button class="lang__btn" type="button" aria-haspopup="true">KOR ${CHEV}</button>
             <div class="lang__list">${LANGS.map(([l, on]) => `<a href="#"${on ? ' aria-current="true"' : ''}>${l}</a>`).join('')}</div></div>
@@ -30,7 +30,6 @@
         </div>
       </div>
       <div class="mega"><div class="mega__in">
-        <div class="mega__cols" style="margin-left:calc(50% - 340px)">${MENU.map(m => `<div class="mega__col">${m.sub.map(([l, h]) => `<a href="${h}">${l}</a>`).join('')}</div>`).join('')}</div>
         <div class="mega__quick">
           <a href="product.html#download"><span><b>카탈로그 다운로드</b><small>의료진 전용 · PDF</small></span>${ARROW}</a>
           <a href="demo.html"><span><b>데모 신청</b><small>방문 시연 일정 조율</small></span>${ARROW}</a>
