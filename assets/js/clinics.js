@@ -1,5 +1,5 @@
-/* 도입 병원 찾기 — 병원 목록 · 구글 지도 연동(주소 기반 임베드) · 네이버 지도 링크 · 지역 필터 · 검색
-   구글 지도 임베드는 API 키 없이 주소 검색으로 위치를 표시합니다. 정확한 좌표 마커가 필요하면 지도 API 키 발급 후 교체합니다. */
+/* 도입 병원 찾기 — 병원 목록 · 전국 SVG 지도(시·도 단위 핀) · 네이버 지도 링크 · 지역 필터 · 검색
+   외부 지도 API 없이 assets/js/korea-map.js(시·도 경계 SVG 경로)로 그립니다. 위치는 지역 단위로만 표시합니다. */
 (function () {
   const CLINICS = [
     { name: '연세코스모의원', group: '경기', area: '광명', addr: '경기 광명시 광명로 907, 3층', q: '연세코스모의원 광명' },
@@ -22,16 +22,32 @@
 
   const naver = c => 'https://map.naver.com/p/search/' + encodeURIComponent(c.q);
   const google = c => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.name + ' ' + c.addr);
-  const embed = (query, zoom) => `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=${zoom}&hl=ko&output=embed`;
-
-  const frame = document.createElement('iframe');
-  frame.className = 'map__frame';
-  frame.title = '도입 병원 위치 (구글 지도)';
-  frame.referrerPolicy = 'no-referrer-when-downgrade';
-  frame.allowFullscreen = true;
-  mapBox.appendChild(frame);
-  const show = (query, zoom) => { const src = embed(query, zoom); if (frame.getAttribute('src') !== src) frame.src = src; };
-  const overview = g => show(g === '전체' ? '대한민국' : g, g === '전체' ? 7 : 10);
+  const REG = { '서울': '11', '인천': '23', '경기': '31', '대전': '25', '울산': '26' };
+  // 핀 위치(지도 좌표) — 수도권 3곳은 서로 겹치지 않도록 분산
+  const PIN = { '서울': [240, 140, 'top'], '인천': [196, 154, 'left'], '경기': [294, 176, 'right'], '대전': [282, 283, 'right'], '울산': [458, 381, 'left'] };
+  const M = window.KOREA_MAP, NS = 'http://www.w3.org/2000/svg';
+  const el = (n, a, p) => { const e = document.createElementNS(NS, n); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; };
+  const svg = el('svg', { viewBox: '0 0 ' + M.w + ' ' + M.h, class: 'kmap', role: 'group', 'aria-label': '대한민국 도입 병원 분포 지도' });
+  const regs = {}, pins = {};
+  Object.entries(M.r).forEach(([code, r]) => {
+    const g = Object.keys(REG).find(k => REG[k] === code);
+    const p = el('path', { d: r.d, class: 'kmap__r' + (g ? ' has' : '') }, svg);
+    if (g) { regs[g] = p; p.addEventListener('click', () => pickGroup(group === g ? '전체' : g)); }
+  });
+  Object.entries(PIN).forEach(([g, [x, y, side]]) => {
+    const pg = el('g', { class: 'kmap__pin', transform: 'translate(' + x + ' ' + y + ')', tabindex: 0, role: 'button', 'aria-label': g + ' 도입 병원' }, svg);
+    const inner = el('g', { class: 'kmap__pin-in' }, pg);
+    el('circle', { r: 11, class: 'kmap__ring' }, inner);
+    el('circle', { r: 5.5, class: 'kmap__dot' }, inner);
+    const dx = side === 'left' ? -18 : side === 'right' ? 18 : 0, dy = side === 'top' ? -20 : 5;
+    const t = el('text', { x: dx, y: dy, class: 'kmap__lbl', 'text-anchor': side === 'left' ? 'end' : side === 'right' ? 'start' : 'middle' }, inner);
+    pg.addEventListener('click', () => pickGroup(group === g ? '전체' : g));
+    pg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pickGroup(group === g ? '전체' : g); } });
+    pins[g] = { pg, t };
+  });
+  Object.values(pins).forEach((p, i) => p.pg.style.setProperty('--i', i));
+  mapBox.appendChild(svg);
+  if ('IntersectionObserver' in window) { const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { mapBox.classList.add('is-in'); io.disconnect(); } }), { threshold: 0.25 }); io.observe(mapBox); } else mapBox.classList.add('is-in');
 
   let active = -1;
   const items = CLINICS.map((c, i) => {
@@ -54,7 +70,7 @@
     if (active > -1) items[active].card.classList.remove('is-active');
     active = i;
     items[i].card.classList.add('is-active');
-    show(items[i].c.name + ' ' + items[i].c.addr, 16);
+    paint();
   }
 
   let group = '전체', query = '';
@@ -63,22 +79,32 @@
     const shown = items.filter(({ c }) =>
       (group === '전체' || c.group === group) &&
       (!query || (c.name + c.area + c.group + c.addr).includes(query)));
-    if (!shown.length) { list.appendChild(empty); return; }
+    if (!shown.length) { list.appendChild(empty); paint(shown); return; }
     shown.forEach(it => list.appendChild(it.card));
-    if (active > -1 && !shown.includes(items[active])) { items[active].card.classList.remove('is-active'); active = -1; }
-  }
+m=>m+"    paint(shown);\n"  }
 
-  document.querySelectorAll('.clinic-filter [data-chips] .chip').forEach(chip => chip.addEventListener('click', e => {
-    e.preventDefault();
-    group = chip.textContent.trim();
+  const chips = [...document.querySelectorAll('.clinic-filter [data-chips] .chip')];
+  function paint(shown) {
+    shown = shown || items.filter(({ c }) => (group === '전체' || c.group === group) && (!query || (c.name + c.area + c.group + c.addr).includes(query)));
+    Object.entries(pins).forEach(([g, p]) => {
+      const n = shown.filter(({ c }) => c.group === g).length;
+      p.t.textContent = g + ' ' + n;
+      p.pg.classList.toggle('is-off', !n);
+      p.pg.classList.toggle('is-sel', group === g);
+      p.pg.classList.toggle('is-act', active > -1 && items[active].c.group === g);
+      regs[g].classList.toggle('is-sel', group === g);
+    });
+  }
+  function pickGroup(g) {
+    group = g;
+    chips.forEach(c => c.classList.toggle('is-active', c.textContent.trim() === g));
     apply();
-    if (active === -1) overview(group);
-  }));
+  }
+  chips.forEach(chip => chip.addEventListener('click', e => { e.preventDefault(); pickGroup(chip.textContent.trim()); }));
   const form = document.querySelector('.clinic-filter .search');
   const input = form?.querySelector('input');
   form?.addEventListener('submit', e => { e.preventDefault(); query = input.value.trim(); apply(); });
   input?.addEventListener('input', () => { query = input.value.trim(); apply(); });
 
   apply();
-  overview('전체');
 })();

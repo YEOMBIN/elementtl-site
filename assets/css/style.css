@@ -1077,3 +1077,31 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .cases.is-stack .case.reveal { transform: none; }
 }
 @media (min-width: 1025px) { #clinical.section { overflow: clip; } }
+
+/* Clinics: nationwide SVG map (map left / list right on PC, stacked on tablet · mobile) */
+.clinic-split .map { order: -1; min-height: 0; background: var(--paper); background-image: none; }
+.clinic-split .map__canvas { position: static; background: none; padding: 56px 24px 24px; }
+.map .map__label { top: 20px; left: 20px; border: 1px solid var(--line); }
+.kmap { display: block; width: 100%; height: auto; max-height: 720px; margin: 0 auto; overflow: visible; }
+.kmap__r { fill: #E9EDF5; stroke: var(--white); stroke-width: 1.2; stroke-linejoin: round; transition: fill 0.4s var(--ease); }
+.kmap__r.has { fill: #C9D6EE; cursor: pointer; }
+.kmap__r.has:hover { fill: #AFC3E8; }
+.kmap__r.is-sel { fill: var(--navy-900); }
+.kmap__pin { cursor: pointer; outline: none; opacity: 0; transition: opacity 0.5s var(--ease); }
+.map.is-in .kmap__pin { opacity: 1; transition-delay: calc(0.3s + var(--i, 0) * 0.12s); }
+.map.is-in .kmap__pin.is-off { opacity: 0.35; transition-delay: 0s; }
+.kmap__pin-in { transform-box: fill-box; transform-origin: center; transition: transform 0.4s var(--ease); }
+.map:not(.is-in) .kmap__pin-in { transform: translateY(-10px); }
+.kmap__ring { fill: rgba(47, 107, 255, 0.16); stroke: rgba(47, 107, 255, 0.45); stroke-width: 1; transition: fill 0.4s var(--ease); }
+.kmap__dot { fill: var(--blue-500); stroke: var(--white); stroke-width: 2; }
+.kmap__lbl { font-family: var(--font-kr); font-size: 15px; font-weight: 500; fill: var(--ink-900); stroke: var(--paper); stroke-width: 4px; paint-order: stroke; }
+.kmap__pin:hover .kmap__ring, .kmap__pin:focus-visible .kmap__ring, .kmap__pin.is-act .kmap__ring { fill: rgba(47, 107, 255, 0.3); }
+.kmap__pin.is-sel .kmap__ring { fill: rgba(255, 255, 255, 0.25); stroke: var(--white); }
+.kmap__pin.is-sel .kmap__dot { fill: var(--white); stroke: var(--blue-500); }
+.kmap__pin.is-sel .kmap__lbl { fill: var(--white); stroke: var(--navy-900); }
+@media (min-width: 1025px) {
+  .clinic-split { grid-template-columns: minmax(0, 1fr) 460px; align-items: start; }
+  .clinic-split .map { position: sticky; top: 110px; }
+}
+@media (max-width: 1024px) { .map { min-height: 0; } }
+@media (max-width: 640px) { .clinic-split .map__canvas { padding: 48px 8px 16px; } .kmap__lbl { font-size: 22px; stroke-width: 5px; } .kmap__ring { r: 15; } }
