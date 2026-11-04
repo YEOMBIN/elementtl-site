@@ -1041,30 +1041,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .w-panel[data-anim] .w-panel__body > :nth-child(3) { animation-delay: 0.16s; }
 @keyframes maskUp { from { transform: translateY(100%); } to { transform: none; } }
 
-/* Core structure: sticky media + steps (PC); tablet / mobile keep the card list */
-.story-media { display: none; }
-@media (min-width: 1025px) {
-  .struct.is-story { grid-template-columns: minmax(0, 1fr) 460px; column-gap: 96px; align-items: start; margin-top: 72px; }
-  .story-media { display: block; position: sticky; top: 140px; grid-column: 1; grid-row: 1 / span 3; height: 560px; border-radius: 32px; background: var(--paper); overflow: hidden; }
-  .story-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; scale: 1.06; transition: opacity 0.9s var(--ease), scale 1.4s var(--ease); }
-  .story-media img.is-on { opacity: 1; scale: 1; }
-  .story-media__meta { position: absolute; left: 32px; bottom: 28px; display: flex; align-items: center; gap: 8px; font-family: var(--font-en); font-size: 13px; color: var(--ink-400); }
-  .story-media__meta b { font-weight: 600; color: var(--ink-900); }
-  .story-media__bars { display: flex; gap: 6px; margin-left: 16px; }
-  .story-media__bars i { width: 28px; height: 2px; border-radius: 2px; background: var(--line); transition: background 0.5s var(--ease); }
-  .story-media__bars i.is-on { background: var(--blue-500); }
-  .struct.is-story .scard { grid-column: 2; display: flex; align-items: center; min-height: 420px; padding: 0 0 0 36px; border-radius: 0; background: none; border-left: 1px solid var(--line); opacity: 0.32; transition: opacity 0.6s var(--ease), border-color 0.6s var(--ease); }
-  .struct.is-story .scard.is-active { opacity: 1; border-left-color: var(--blue-500); }
-  .struct.is-story .scard__img { display: none; }
-  .struct.is-story .scard__body { padding: 0; }
-  .struct.is-story .scard__body h3 { margin-top: 14px; font-size: 30px; font-weight: 500; }
-  .struct.is-story .scard__body p:not(.scard__short) { margin-top: 18px; font-size: 16px; line-height: 1.8; }
-  .struct.is-story .scard .pills { margin-top: 22px; }
-  .struct.is-story .pills span { background: var(--paper); }
-  .struct.is-story .scard.reveal { opacity: 0.32; transform: none; }
-  .struct.is-story .scard.reveal.is-active { opacity: 1; }
-}
-
 /* Reveal variants — section titles mask up, product images unveil, cards follow in sequence */
 .has-motion .sec-head.reveal { opacity: 1; transform: none; }
 .has-motion .sec-head.reveal .h2 { clip-path: inset(0 0 100% 0); transform: translateY(28px); transition: clip-path 1.1s cubic-bezier(0.22, 0.61, 0.36, 1), transform 1.1s cubic-bezier(0.22, 0.61, 0.36, 1); }

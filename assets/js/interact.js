@@ -62,29 +62,4 @@
     g.addEventListener('click', pick);
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
   });
-
-  /* ---------- Core structure: scroll storytelling (PC) ---------- */
-  const struct = document.querySelector('.struct');
-  if (struct) {
-    const steps = [...struct.querySelectorAll('.scard')];
-    const media = document.createElement('div');
-    media.className = 'story-media';
-    media.setAttribute('aria-hidden', 'true');
-    media.innerHTML = steps.map((s, i) => `<img src="${s.querySelector('img')?.getAttribute('src')}" alt="" data-i="${i}">`).join('') +
-      `<div class="story-media__meta"><b>01</b><span>/ ${String(steps.length).padStart(2, '0')}</span><div class="story-media__bars">${steps.map(() => '<i></i>').join('')}</div></div>`;
-    struct.prepend(media);
-    struct.classList.add('is-story');
-    const imgs = [...media.querySelectorAll('img')], bars = [...media.querySelectorAll('.story-media__bars i')], num = media.querySelector('b');
-    const set = i => {
-      steps.forEach((s, k) => s.classList.toggle('is-active', k === i));
-      imgs.forEach((m, k) => m.classList.toggle('is-on', k === i));
-      bars.forEach((b, k) => b.classList.toggle('is-on', k <= i));
-      num.textContent = String(i + 1).padStart(2, '0');
-    };
-    set(0);
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && pc()) set(steps.indexOf(e.target)); }), { rootMargin: '-45% 0px -45% 0px' });
-      steps.forEach(s => io.observe(s));
-    }
-  }
 })();
