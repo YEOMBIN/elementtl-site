@@ -316,6 +316,11 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .beam { position: relative; margin: 0 auto; }
 .beam svg { width: 100%; height: auto; overflow: visible; display: block; }
 .beam text { font-family: var(--font-en); letter-spacing: 0; }
+/* Selected wavelength in color, the other two in grayscale */
+.beam-l .beam-color, .beam-l .beam-gray { transition: opacity 0.6s var(--ease); }
+.beam-l .beam-color { opacity: 0; }
+.beam-l.is-on .beam-color { opacity: 1; }
+.beam-l.is-on .beam-gray { opacity: 0; }
 @media (max-width: 640px) { .beam .minor { display: none; } }
 .w-tabs { display: flex; gap: 16px; margin-top: 48px; }
 .w-tab { flex: 1; display: flex; justify-content: space-between; align-items: center; height: 72px; padding: 0 28px; border: 1px solid var(--white-10); border-radius: 999px; background: var(--white-06); transition: 0.4s var(--ease); }

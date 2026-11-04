@@ -121,6 +121,8 @@
     let s = `<svg viewBox="0 -30 ${W} 450" aria-label="400–1100nm 파장 눈금 위 532·755·1064nm 위치"><defs>
       <linearGradient id="axis" x1="0" x2="1"><stop offset="0" stop-color="#9AABB9" stop-opacity=".15"/><stop offset=".43" stop-color="#9AABB9" stop-opacity=".6"/><stop offset="1" stop-color="#9AABB9" stop-opacity=".25"/></linearGradient>`;
     for (const l of [532, 755, 1064]) s += `<linearGradient id="b${l}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${C[l]}" stop-opacity="0"/><stop offset="1" stop-color="${C[l]}"/></linearGradient><radialGradient id="g${l}"><stop offset="0" stop-color="${C[l]}" stop-opacity=".7"/><stop offset="1" stop-color="${C[l]}" stop-opacity="0"/></radialGradient>`;
+    // Unselected wavelengths: same beam drawn in the axis silver (grayscale)
+    s += `<linearGradient id="bGray" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9AABB9" stop-opacity="0"/><stop offset="1" stop-color="#9AABB9" stop-opacity=".7"/></linearGradient><radialGradient id="gGray"><stop offset="0" stop-color="#9AABB9" stop-opacity=".35"/><stop offset="1" stop-color="#9AABB9" stop-opacity="0"/></radialGradient>`;
     s += `</defs><rect x="0" y="${AX}" width="${W}" height="2" fill="url(#axis)"/>`;
     for (let l = 400; l <= 1100; l += 50) {
       const major = l % 100 === 0, keep = [400, 700, 1100].includes(l);
@@ -130,9 +132,9 @@
     s += `<text x="6" y="${AX - 16}" fill="#fff" fill-opacity=".4" font-size="12" font-weight="600">VISIBLE</text><text x="${X(700) + 6}" y="${AX - 16}" fill="#fff" fill-opacity=".4" font-size="12" font-weight="600">NEAR-INFRARED</text><rect x="${X(700)}" y="${AX - 30}" width="1" height="24" fill="#fff" fill-opacity=".1"/>`;
     for (const l of [532, 755, 1064]) {
       const x = X(l);
-      s += `<g class="beam-l" data-w="${l}"><rect class="cone" x="${x - 80}" y="0" width="160" height="${AX}" fill="${C[l]}" fill-opacity="0"/>
-        <rect class="ray" x="${x - 1}" y="20" width="2" height="${AX - 20}" fill="url(#b${l})"/>
-        <circle cx="${x}" cy="${AX}" r="60" fill="url(#g${l})"/>
+      s += `<g class="beam-l" data-w="${l}">
+        <g class="beam-gray"><rect x="${x - 1}" y="20" width="2" height="${AX - 20}" fill="url(#bGray)"/><circle cx="${x}" cy="${AX}" r="60" fill="url(#gGray)"/></g>
+        <g class="beam-color"><rect x="${x - 1}" y="20" width="2" height="${AX - 20}" fill="url(#b${l})"/><circle cx="${x}" cy="${AX}" r="60" fill="url(#g${l})"/></g>
         <circle cx="${x}" cy="${AX}" r="6" fill="#fff"/>
         <text class="lbl" x="${Math.min(x, W - 50)}" y="6" fill="#fff" font-size="22" text-anchor="middle">${l}nm</text></g>`;
     }
@@ -150,7 +152,7 @@
     document.querySelectorAll('.w-tab').forEach(t => t.classList.toggle('is-active', t === tab));
     document.querySelectorAll('.beam-l').forEach(g => {
       const on = g.dataset.w === w;
-      g.querySelector('.cone').setAttribute('fill-opacity', 0);
+      g.classList.toggle('is-on', on); // selected = color, others = grayscale (CSS crossfade)
       g.querySelector('.lbl').setAttribute('fill-opacity', on ? 1 : 0.4);
     });
     if (panel) {
