@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>데모 신청 | 엘레멘트티엘 Gen2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="support" data-no-float="1">
+  <header id="site-header"></header>
+  <main>
+    <section class="subvis">
+      <div class="glow" style="width:1200px;height:700px;left:50%;transform:translateX(-50%);top:-260px"></div>
+      <div class="laser"></div>
+      <div class="wrap" style="position:relative">
+        <p class="crumb">HOME › 고객지원 › <b>데모 신청</b></p>
+        <h1>Demo Request</h1>
+        <p>데모 신청</p>
+      </div>
+    </section>
+    <section class="sheet on-light page-body">
+      <div class="wrap">
+        <div class="lnb-wrap"><nav class="lnb"><a href="inquiry.html">제품 도입 문의</a><a href="demo.html" class="is-active">데모 신청</a></nav></div>
+        <div class="form-layout">
+          <aside class="side">
+            <p class="overline">Demo Request</p>
+            <h2 class="h2">병원에서 직접<br><b>시연해 보세요</b></h2>
+            <ol class="process">
+              <li><b>01</b><div><strong>데모 신청</strong><span>희망 일정과 장소를 남겨 주세요</span></div></li>
+              <li><b>02</b><div><strong>일정 확정</strong><span>담당자가 연락해 일정을 확정합니다</span></div></li>
+              <li><b>03</b><div><strong>방문 시연</strong><span>병원으로 장비를 가져가 시연합니다</span></div></li>
+              <li><b>04</b><div><strong>도입 상담</strong><span>시연 후 도입 조건을 안내합니다</span></div></li>
+            </ol>
+            <div class="side-card"><b>바로 상담이 필요하신가요?</b><dl><div><dt>전화</dt><dd>[담당자] 010-0000-0000</dd></div><div><dt>카카오톡</dt><dd>채널 주소 입력 예정</dd></div></dl></div>
+            <div class="points"><b>시연에서 확인할 수 있어요</b><ul><li>한 핸드피스로 3파장 전환</li><li>줌 링으로 스팟 크기 조절</li><li>SCD 냉매 분사 냉각</li></ul></div>
+          </aside>
+          <form class="form">
+            <div class="fgroup"><h3>신청자 정보</h3>
+              <div class="frow"><div class="field"><label for="org">의료기관명<i>*</i></label><input id="org" required placeholder="의료기관명을 입력하세요"></div><div class="field"><label for="name">담당자명<i>*</i></label><input id="name" required placeholder="성함"></div></div>
+              <div class="frow"><div class="field"><label for="tel">연락처<i>*</i></label><input id="tel" type="tel" required placeholder="010-0000-0000"></div><div class="field"><label for="mail">이메일</label><input id="mail" type="email" placeholder="example@clinic.co.kr"></div></div>
+            </div>
+            <div class="fgroup"><h3>희망 일정 · 장소</h3>
+              <div class="frow frow--1"><div class="field"><label for="addr">방문 주소<i>*</i></label><input id="addr" required placeholder="주소 검색"></div></div>
+              <div class="frow"><div class="field"><label for="d1">희망 일자 (1순위)<i>*</i></label><input id="d1" type="date" required></div><div class="field"><label for="d2">희망 일자 (2순위)</label><input id="d2" type="date"></div></div>
+              <div class="frow frow--1"><div class="field"><span class="lbl">희망 시간대</span><div class="opts"><label class="opt"><input type="radio" name="time" checked><span>오전</span></label><label class="opt"><input type="radio" name="time"><span>오후</span></label><label class="opt"><input type="radio" name="time"><span>협의 가능</span></label></div></div></div>
+              <div class="frow frow--1"><div class="field"><label for="ppl">참석 예정 인원</label><select id="ppl"><option>선택하세요</option><option>1~2명</option><option>3~5명</option><option>6명 이상</option></select></div></div>
+            </div>
+            <div class="fgroup"><h3>시연 희망 항목</h3>
+              <div class="frow frow--1"><div class="field"><span class="lbl">관심 파장 (복수 선택)</span><div class="opts"><label class="opt"><input type="checkbox" checked><span>1064nm Nd:YAG</span></label><label class="opt"><input type="checkbox"><span>755nm Alexandrite</span></label><label class="opt"><input type="checkbox"><span>532nm KTP</span></label></div></div></div>
+              <div class="frow frow--1"><div class="field"><label for="msg">요청 사항</label><textarea id="msg" placeholder="시연 시 확인하고 싶은 내용을 적어 주세요"></textarea></div></div>
+            </div>
+            <div class="consent"><p>수집 항목: 의료기관명, 담당자명, 연락처, 이메일 등 입력 정보  ·  이용 목적: 문의 응대 및 상담  ·  보유 기간: 목적 달성 후 지체 없이 파기 (관련 법령에 따른 보관 제외)</p><label><input type="checkbox" required> 개인정보 수집 · 이용에 동의합니다 (필수)</label></div>
+            <button class="btn btn--navy" type="submit">데모 신청하기 <svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer id="site-footer"></footer>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
