@@ -1071,21 +1071,21 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .has-motion .sec-head.reveal .overline, .has-motion .sec-head.reveal .lead, .has-motion .sec-head.reveal > p { opacity: 0; transition: opacity 0.9s var(--ease) 0.25s; }
 .has-motion .sec-head.reveal.is-in .h2 { clip-path: inset(0 0 -10% 0); transform: none; }
 .has-motion .sec-head.reveal.is-in .overline, .has-motion .sec-head.reveal.is-in .lead, .has-motion .sec-head.reveal.is-in > p { opacity: 1; }
-.has-motion .intro__img.reveal, .has-motion .ov-img.reveal { opacity: 1; transform: none; clip-path: inset(100% 0 0 0 round 32px); transition: clip-path 1.4s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.has-motion .intro__img.reveal.is-in { clip-path: inset(-40px -400px -40px -40px); }
-.has-motion .ov-img.reveal.is-in { clip-path: inset(0 0 0 0 round 32px); }
-.has-motion .intro__img.reveal > img { scale: 1.08; transition: scale 1.8s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.has-motion .intro__img.reveal.is-in > img { scale: 1; }
-.has-motion .app.reveal { opacity: 1; transform: none; clip-path: inset(100% 0 0 0 round 999px); transition: clip-path 1.2s cubic-bezier(0.22, 0.61, 0.36, 1); }
-.has-motion .app.reveal.is-in { clip-path: inset(0 0 0 0 round 999px); }
-.has-motion .app.reveal:nth-child(2) { transition-delay: 0.12s; }
-.has-motion .app.reveal:nth-child(3) { transition-delay: 0.24s; }
+/* The observed container must stay un-clipped (IntersectionObserver ignores fully clipped targets), so the mask is on the image itself */
+.has-motion .intro__img.reveal, .has-motion .ov-img.reveal, .has-motion .app.reveal { opacity: 1; transform: none; }
+.has-motion .intro__img.reveal > img, .has-motion .ov-img.reveal > img, .has-motion .app.reveal > img { clip-path: inset(100% 0 0 0); scale: 1.06; transition: clip-path 1.4s cubic-bezier(0.22, 0.61, 0.36, 1), scale 1.8s cubic-bezier(0.22, 0.61, 0.36, 1), transform 1.2s var(--ease); }
+.has-motion .intro__img.reveal.is-in > img, .has-motion .ov-img.reveal.is-in > img, .has-motion .app.reveal.is-in > img { clip-path: inset(0 0 0 0); scale: 1; }
+.has-motion .intro__img.reveal .hotspots { opacity: 0; transition: opacity 0.9s var(--ease) 1.2s; }
+.has-motion .intro__img.reveal.is-in .hotspots { opacity: 1; }
+.has-motion .app.reveal:nth-child(2) > img { transition-delay: 0.12s; }
+.has-motion .app.reveal:nth-child(3) > img { transition-delay: 0.24s; }
 .has-motion .wcard.reveal:nth-child(2), .has-motion .scard.reveal:nth-child(3) { transition-delay: 0.1s; }
 .has-motion .wcard.reveal:nth-child(3), .has-motion .scard.reveal:nth-child(4) { transition-delay: 0.2s; }
 
 @media (prefers-reduced-motion: reduce) {
   .has-motion .hero__img, .has-motion .hero h1 .ln > span, .has-motion .hero__ol, .has-motion .hero__kr, .has-motion .hero__waves { scale: 1; opacity: 1; transform: none; transition: none; }
-  .has-motion .sec-head.reveal .h2, .has-motion .intro__img.reveal, .has-motion .ov-img.reveal, .has-motion .app.reveal { clip-path: none; transform: none; transition: none; }
+  .has-motion .sec-head.reveal .h2, .has-motion .intro__img.reveal > img, .has-motion .ov-img.reveal > img, .has-motion .app.reveal > img { clip-path: none; transform: none; scale: 1; transition: none; }
+  .has-motion .intro__img.reveal .hotspots { opacity: 1; transition: none; }
   .has-motion .sec-head.reveal .overline, .has-motion .sec-head.reveal .lead, .has-motion .sec-head.reveal > p { opacity: 1; }
   .hs > i::after { animation: none; }
 }
