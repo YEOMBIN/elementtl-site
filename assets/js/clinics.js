@@ -81,7 +81,9 @@
       (!query || (c.name + c.area + c.group + c.addr).includes(query)));
     if (!shown.length) { list.appendChild(empty); paint(shown); return; }
     shown.forEach(it => list.appendChild(it.card));
-m=>m+"    paint(shown);\n"  }
+    if (active > -1 && !shown.includes(items[active])) { items[active].card.classList.remove('is-active'); active = -1; }
+    paint(shown);
+  }
 
   const chips = [...document.querySelectorAll('.clinic-filter [data-chips] .chip')];
   function paint(shown) {
