@@ -62,4 +62,32 @@
     g.addEventListener('click', pick);
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
   });
+
+  /* ---------- Clinical cards: stacking (PC) — sticky position, scrubbed dimming (both directions) ---------- */
+  const caseWrap = document.querySelector('.cases');
+  if (caseWrap && !reduce && window.gsap && window.ScrollTrigger) {
+    gsap.registerPlugin(ScrollTrigger);
+    gsap.matchMedia().add('(min-width: 1025px)', () => {
+      const kill = () => ScrollTrigger.getAll().filter(t => t.vars.id === 'case-stack').forEach(t => t.kill());
+      const build = () => {
+        kill();
+        const cards = [...caseWrap.querySelectorAll('.case')].filter(c => c.offsetParent !== null);
+        cards.forEach((c, i) => {
+          c.style.setProperty('--stack-top', 120 + i * 18 + 'px');
+          c.style.zIndex = i + 1;
+          c.style.setProperty('--dim', 0);
+          const next = cards[i + 1];
+          if (!next) return;
+          gsap.fromTo(c, { '--dim': 0 }, { '--dim': 1, ease: 'none', immediateRender: false,
+            scrollTrigger: { id: 'case-stack', trigger: next, start: 'top 85%', end: 'top ' + (120 + (i + 1) * 18) + 'px', scrub: 0.6 } });
+        });
+      };
+      caseWrap.classList.add('is-stack');
+      build();
+      const onTab = () => setTimeout(() => { build(); ScrollTrigger.refresh(); }, 60);
+      const tabs = [...document.querySelectorAll('.ftab')];
+      tabs.forEach(b => b.addEventListener('click', onTab));
+      return () => { tabs.forEach(b => b.removeEventListener('click', onTab)); caseWrap.classList.remove('is-stack'); kill(); caseWrap.querySelectorAll('.case').forEach(c => { c.style.zIndex = ''; c.style.removeProperty('--dim'); }); };
+    });
+  }
 })();
