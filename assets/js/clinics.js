@@ -1,7 +1,6 @@
-/* 도입 병원 찾기 — 병원 목록 · 지도(Leaflet + OpenStreetMap) · 지역 필터 · 검색 */
+/* 도입 병원 찾기 — 병원 목록 · 구글 지도 연동(주소 기반 임베드) · 네이버 지도 링크 · 지역 필터 · 검색
+   구글 지도 임베드는 API 키 없이 주소 검색으로 위치를 표시합니다. 정확한 좌표 마커가 필요하면 지도 API 키 발급 후 교체합니다. */
 (function () {
-  /* 병원 목록 (2026-11 전달 자료). 좌표는 전달받은 지역 기준의 대략 위치이며, 정확한 주소 확정 후 교체합니다.
-     group: 지역 필터 칩 이름 / area: 카드에 표시할 지역 */
   const CLINICS = [
     { name: '연세코스모의원', group: '경기', area: '광명', addr: '경기 광명시 광명로 907, 3층', q: '연세코스모의원 광명' },
     { name: '리앤샤인의원', group: '경기', area: '평택', addr: '경기 평택시 용죽3로 18, 2층', q: '리앤샤인의원 평택' },
@@ -15,25 +14,24 @@
     { name: '엑셀브이의원', group: '서울', area: '송파', addr: '서울 송파구 석촌호수로 61, 2층 235호', q: '엑셀브이의원 송파' },
     { name: '탑라인의원', group: '경기', area: '성남', addr: '경기 성남시 중원구 산성대로 80, 6층', q: '탑라인의원 성남' },
     { name: '닥터킨베인의원', group: '인천', area: '검단', addr: '인천 검단구 원당대로 840, 2·3층', q: '닥터킨베인의원 인천' },
-    // lat/lng 는 지도 API 또는 확인된 좌표가 있을 때만 추가합니다 (없으면 마커를 그리지 않음).
   ];
 
   const list = document.querySelector('.clinic-list');
   const mapBox = document.getElementById('clinic-map');
-  if (!list || !mapBox || typeof L === 'undefined') return;
+  if (!list || !mapBox) return;
 
-  const PIN = on => `<svg viewBox="0 0 16 16" width="30" height="30"><path d="M8 15s5-4.6 5-8.5A5 5 0 003 6.5C3 10.4 8 15 8 15z" fill="${on ? '#2f6bff' : '#142443'}"/><circle cx="8" cy="6.5" r="1.8" fill="#fff"/></svg>`;
-  const icon = on => L.divIcon({ className: 'clinic-pin' + (on ? ' is-on' : ''), html: PIN(on), iconSize: [30, 30], iconAnchor: [15, 28], popupAnchor: [0, -26] });
-  const route = c => 'https://map.naver.com/p/search/' + encodeURIComponent(c.q);
+  const naver = c => 'https://map.naver.com/p/search/' + encodeURIComponent(c.q);
+  const google = c => 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.name + ' ' + c.addr);
+  const embed = (query, zoom) => `https://maps.google.com/maps?q=${encodeURIComponent(query)}&z=${zoom}&hl=ko&output=embed`;
 
-  const map = L.map(mapBox, { zoomControl: false, scrollWheelZoom: false, attributionControl: true });
-  // OpenStreetMap standard tiles: no API key, Korean place names. Swap for Kakao / Naver maps when an app key is issued.
-  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>',
-  }).addTo(map);
-  document.querySelector('[data-zoom="in"]')?.addEventListener('click', () => map.zoomIn());
-  document.querySelector('[data-zoom="out"]')?.addEventListener('click', () => map.zoomOut());
+  const frame = document.createElement('iframe');
+  frame.className = 'map__frame';
+  frame.title = '도입 병원 위치 (구글 지도)';
+  frame.referrerPolicy = 'no-referrer-when-downgrade';
+  frame.allowFullscreen = true;
+  mapBox.appendChild(frame);
+  const show = (query, zoom) => { const src = embed(query, zoom); if (frame.getAttribute('src') !== src) frame.src = src; };
+  const overview = g => show(g === '전체' ? '대한민국' : g, g === '전체' ? 7 : 10);
 
   let active = -1;
   const items = CLINICS.map((c, i) => {
@@ -42,33 +40,21 @@
     card.tabIndex = 0;
     card.innerHTML = `<div class="ccard__top"><h3>${c.name}</h3><span>${c.area}</span></div>
       <p><span>${c.addr}</span></p>
-      <div class="acts"><a href="${route(c)}" target="_blank" rel="noopener">네이버 지도</a></div>`;
-    const has = typeof c.lat === 'number' && typeof c.lng === 'number';
-    const marker = has ? L.marker([c.lat, c.lng], { icon: icon(false), title: c.name, riseOnHover: true })
-      .bindPopup(`<b>${c.name}</b><span>${c.group === c.area ? c.area : c.group + ' ' + c.area}</span>`, { closeButton: false, offset: [0, 0] })
-      : null;
-    marker?.on('click', () => select(i, { scrollCard: true }));
-    card.addEventListener('click', e => { if (!e.target.closest('a')) select(i, { fly: true }); });
-    card.addEventListener('keydown', e => { if (e.key === 'Enter') select(i, { fly: true }); });
-    return { c, card, marker };
+      <div class="acts"><a href="${google(c)}" target="_blank" rel="noopener">구글 지도</a><a href="${naver(c)}" target="_blank" rel="noopener">네이버 지도</a></div>`;
+    card.addEventListener('click', e => { if (!e.target.closest('a')) select(i); });
+    card.addEventListener('keydown', e => { if (e.key === 'Enter') select(i); });
+    return { c, card };
   });
 
   const empty = document.createElement('p');
   empty.className = 'clinic-empty';
   empty.textContent = '해당 조건의 도입 병원 정보가 아직 없습니다.';
 
-  function select(i, { fly = false, scrollCard = false } = {}) {
-    if (active > -1) { items[active].card.classList.remove('is-active'); items[active].marker?.setIcon(icon(false)); }
+  function select(i) {
+    if (active > -1) items[active].card.classList.remove('is-active');
     active = i;
-    const it = items[i];
-    it.card.classList.add('is-active');
-    if (it.marker) {
-      it.marker.setIcon(icon(true));
-      it.marker.setZIndexOffset(1000);
-      if (fly) map.flyTo([it.c.lat, it.c.lng], Math.max(map.getZoom(), 12), { duration: 0.8 });
-      it.marker.openPopup();
-    }
-    if (scrollCard) it.card.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+    items[i].card.classList.add('is-active');
+    show(items[i].c.name + ' ' + items[i].c.addr, 16);
   }
 
   let group = '전체', query = '';
@@ -77,18 +63,16 @@
     const shown = items.filter(({ c }) =>
       (group === '전체' || c.group === group) &&
       (!query || (c.name + c.area + c.group + c.addr).includes(query)));
-    items.forEach(it => { const on = shown.includes(it); if (!it.marker) return; if (on) map.addLayer(it.marker); else map.removeLayer(it.marker); });
+    if (!shown.length) { list.appendChild(empty); return; }
     shown.forEach(it => list.appendChild(it.card));
-    if (!shown.length) { list.appendChild(empty); map.setView([36.4, 127.8], 7); return; }
-    const pts = shown.filter(it => it.marker).map(({ c }) => [c.lat, c.lng]);
-    if (pts.length) map.fitBounds(L.latLngBounds(pts), { padding: [48, 48], maxZoom: 13 }); else map.setView([36.4, 127.8], 7);
-    if (!shown.includes(items[active])) { if (active > -1) { items[active].card.classList.remove('is-active'); items[active].marker?.setIcon(icon(false)); } active = -1; }
+    if (active > -1 && !shown.includes(items[active])) { items[active].card.classList.remove('is-active'); active = -1; }
   }
 
   document.querySelectorAll('.clinic-filter [data-chips] .chip').forEach(chip => chip.addEventListener('click', e => {
     e.preventDefault();
     group = chip.textContent.trim();
     apply();
+    if (active === -1) overview(group);
   }));
   const form = document.querySelector('.clinic-filter .search');
   const input = form?.querySelector('input');
@@ -96,7 +80,5 @@
   input?.addEventListener('input', () => { query = input.value.trim(); apply(); });
 
   apply();
-  // Leaflet needs a size refresh once the layout (and reveal animations) settle
-  window.addEventListener('load', () => map.invalidateSize());
-  window.addEventListener('resize', () => map.invalidateSize());
+  overview('전체');
 })();
