@@ -157,7 +157,7 @@
     });
     if (panel) {
       const d = WAVES[w];
-      panel.innerHTML = `<div class="w-panel__num">${w}<small>nm</small></div><div class="w-panel__body"><p class="overline" style="color:var(--blue-200)">${d.med}</p><h3 class="h3">${d.t}</h3><p class="body">${d.d}</p></div>`;
+      panel.innerHTML = `<div class="w-panel__num"><span>${w}<small>nm</small></span></div><div class="w-panel__body"><p class="overline" style="color:var(--blue-200)">${d.med}</p><h3 class="h3">${d.t}</h3><p class="body">${d.d}</p></div>`;
       panel.removeAttribute('data-anim'); void panel.offsetWidth; panel.setAttribute('data-anim', '');
     }
   }));
