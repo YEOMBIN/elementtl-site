@@ -85,10 +85,11 @@
 
   /* ---------- Floating CTA ---------- */
   if (!document.body.dataset.noFloat) {
-    const f = document.createElement('a');
-    f.className = 'float-cta';
-    f.href = 'inquiry.html';
-    f.innerHTML = `<span class="en">INQUIRY</span><span class="kr">제품 도입 문의</span>${ARROW}`;
+    const f = document.createElement('nav');
+    f.className = 'quick';
+    f.setAttribute('aria-label', '퀵 메뉴');
+    f.innerHTML = `<a href="${BLOG}" target="_blank" rel="noopener" aria-label="블로그" title="블로그"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg></a><a href="#" data-todo="인스타그램 주소 연결 예정입니다." aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z"/><circle cx="12" cy="12" r="4"/><path d="M17.3 6.7h.01"/></svg></a><a href="#" data-todo="카카오톡 채널 주소 연결 예정입니다." aria-label="카카오톡" title="카카오톡"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4C7 4 3 7.1 3 11c0 2.5 1.7 4.7 4.2 6L6.3 20.5l3.9-2.5c.6.1 1.2.1 1.8.1 5 0 9-3.1 9-7s-4-7.1-9-7.1z"/></svg></a><a href="#top" class="quick__top" aria-label="맨 위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V6M6 12l6-6 6 6"/></svg><b>TOP</b></a>`;
+    f.querySelector('.quick__top').addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
     document.body.appendChild(f);
   }
 

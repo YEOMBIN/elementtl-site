@@ -1140,3 +1140,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   /* 도입 병원: 모바일은 지도 없이 병원 목록만 */
   .clinic-split .map { display: none; }
 }
+
+/* Quick menu (Figma C-2): 블로그 · 인스타그램 · 카카오톡 · TOP — 기존 문의 플로팅 버튼 대체 */
+.float-cta { display: none; }
+.quick { position: fixed; right: 40px; bottom: 48px; z-index: 40; display: flex; flex-direction: column; gap: 12px; }
+.quick a { width: 48px; height: 48px; border-radius: 50%; background: var(--navy-900); border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 4px 16px rgba(0, 4, 15, 0.24); color: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transition: transform 0.4s var(--ease), background 0.4s var(--ease); }
+.quick a:hover { transform: translateY(-3px); background: var(--blue-500); }
+.quick svg { width: 20px; height: 20px; }
+.quick__top svg { width: 16px; height: 16px; }
+.quick b { font-family: var(--font-en); font-size: 9px; font-weight: 700; line-height: 1; }
+@media (max-width: 1024px) { .quick { right: 32px; bottom: 36px; gap: 10px; } .quick a { width: 44px; height: 44px; } .quick svg { width: 18px; height: 18px; } .quick__top svg { width: 14px; height: 14px; } }
+@media (max-width: 640px) { .quick { right: 16px; bottom: 24px; gap: 8px; } .quick a { width: 40px; height: 40px; } .quick svg { width: 16px; height: 16px; } .quick__top svg { width: 13px; height: 13px; } .quick b { font-size: 8px; } body { padding-bottom: 0; } }
