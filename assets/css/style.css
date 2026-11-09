@@ -1112,3 +1112,31 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 }
 @media (max-width: 1024px) { .map { min-height: 0; } }
 @media (max-width: 640px) { .clinic-split .map__canvas { padding: 48px 8px 16px; } .kmap__lbl { font-size: 22px; stroke-width: 5px; } .kmap__ring { r: 15; } }
+
+/* Mobile 390 — Figma 시안 C-2 (모바일 전용, PC/태블릿 영향 없음) */
+.m-hide { display: inline; }
+.car-all--m { display: none; }
+@media (max-width: 640px) {
+  .m-hide { display: none; }
+  /* S01: 중앙 정렬 + 장비 이미지는 카피 아래에 크게 */
+  .hero { height: 768px; }
+  .hero__copy { padding-top: 96px; padding-bottom: 0; text-align: center; }
+  .hero__ol, .hero__waves { justify-content: center; }
+  .hero__img { inset: 330px 0 0 0; height: auto; background-size: 840px 523px; background-position: -432px 0; }
+  .hero__ov { background: linear-gradient(180deg, #00040f 0%, #00040f 40%, rgba(0, 4, 15, 0) 50%, rgba(0, 4, 15, 0) 90%, #00040f 100%); }
+  /* S02: 시안 컨테이너 여백(좌 56 / 우 32) */
+  .intro { padding-left: 36px; padding-right: 12px; }
+  /* S05: 사진이 알약 전체를 덮고 텍스트는 가운데 */
+  .app { justify-content: center; border: 0; }
+  .app img { inset: 0; right: auto; width: 100%; }
+  .app::after { background: rgba(0, 4, 15, 0.5); }
+  .app__txt { padding: 0; text-align: center; }
+  .app__txt h3 { font-size: 26px; }
+  .app__txt p { font-size: 14px; }
+  /* NEWS: 시안 순서 — 헤더 → 카드 → 컨트롤 → 전체 소식 보기 */
+  .news .sec-head .car-all { display: none; }
+  .car-ctl { flex-direction: column; }
+  .car-all--m { display: inline-flex; margin-top: 16px; position: static; }
+  /* 도입 병원: 모바일은 지도 없이 병원 목록만 */
+  .clinic-split .map { display: none; }
+}
