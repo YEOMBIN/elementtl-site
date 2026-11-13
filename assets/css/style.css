@@ -1151,3 +1151,10 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .quick b { font-family: var(--font-en); font-size: 9px; font-weight: 700; line-height: 1; }
 @media (max-width: 1024px) { .quick { right: 32px; bottom: 36px; gap: 10px; } .quick a { width: 44px; height: 44px; } .quick svg { width: 18px; height: 18px; } .quick__top svg { width: 14px; height: 14px; } }
 @media (max-width: 640px) { .quick { right: 16px; bottom: 24px; gap: 8px; } .quick a { width: 40px; height: 40px; } .quick svg { width: 16px; height: 16px; } .quick__top svg { width: 13px; height: 13px; } .quick b { font-size: 8px; } body { padding-bottom: 0; } }
+
+/* 모바일 메뉴 잘림 수정: 헤더의 backdrop-filter가 fixed 메뉴의 기준 박스가 되어 헤더 높이만큼만 보이던 문제 — 블러를 .hd로 이동 (≤1024) */
+@media (max-width: 1024px) {
+  .site-header.is-scrolled, .site-header.is-open { background: none; backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .site-header.is-scrolled .hd, .site-header.is-open .hd { background: rgba(0, 4, 15, 0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .site-header .hd { position: relative; z-index: 1; transition: background 0.5s var(--ease); }
+}
