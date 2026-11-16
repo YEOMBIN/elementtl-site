@@ -111,6 +111,7 @@
       (!query || (c.name + c.area + c.group + c.addr).includes(query)));
     if (!shown.length) { list.appendChild(empty); paint(shown); return; }
     shown.forEach(it => list.appendChild(it.card));
+    list.classList.remove('is-swap'); void list.offsetWidth; list.classList.add('is-swap');
     if (active > -1 && !shown.includes(items[active])) { items[active].card.classList.remove('is-active'); active = -1; }
     paint(shown);
   }

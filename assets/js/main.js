@@ -237,8 +237,10 @@
       render(false);
       void track.offsetWidth; // commit the jump before the next animated move
     }
-    function go(d) { rebase(); i += d; render(true); }
-    track.addEventListener('transitionend', e => { if (e.target === track) rebase(); });
+    let busy = false, pending = 0, busyT = 0;
+    const release = () => { clearTimeout(busyT); busy = false; rebase(); if (pending) { const d = Math.sign(pending); pending -= d; go(d); } };
+    function go(d) { if (busy) { pending = Math.max(-2, Math.min(2, pending + d)); return; } rebase(); busy = true; busyT = setTimeout(release, 900); i += d; render(true); }
+    track.addEventListener('transitionend', e => { if (e.target === track && e.propertyName === 'transform') release(); });
     root.querySelector('[data-prev]')?.addEventListener('click', () => go(-1));
     root.querySelector('[data-next]')?.addEventListener('click', () => go(1));
 
@@ -256,15 +258,19 @@
       const d = dragX; startX = null; dragX = 0; view.classList.remove('is-dragging');
       if (Math.abs(d) > 60) go(d < 0 ? 1 : -1); else render(true);
     });
+    window.addEventListener('pointercancel', () => { if (startX === null) return; startX = null; dragX = 0; view.classList.remove('is-dragging'); render(true); });
     view.addEventListener('click', e => { if (moved) { e.preventDefault(); moved = false; } }, true);
 
     // Slow autoplay; pauses while hovered / focused / dragged, off for reduced motion
-    let timer;
-    const play = () => { if (reduce) return; clearInterval(timer); timer = setInterval(() => { if (startX === null) go(1); }, 5000); };
-    const stop = () => clearInterval(timer);
-    root.addEventListener('mouseenter', stop); root.addEventListener('mouseleave', play);
-    root.addEventListener('focusin', stop); root.addEventListener('focusout', play);
-    document.addEventListener('visibilitychange', () => (document.hidden ? stop() : play()));
+    let timer = 0, hov = false, foc = false, vis = true;
+    const stop = () => { clearInterval(timer); timer = 0; };
+    const play = () => { stop(); if (reduce || hov || foc || !vis || document.hidden) return; timer = setInterval(() => { if (startX === null) go(1); }, 5000); };
+    root.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') { hov = true; stop(); } });
+    root.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') { hov = false; play(); } });
+    root.addEventListener('focusin', e => { if (e.target.matches(':focus-visible')) { foc = true; stop(); } });
+    root.addEventListener('focusout', () => { foc = false; play(); });
+    document.addEventListener('visibilitychange', play);
+    if ('IntersectionObserver' in window) new IntersectionObserver(es => { vis = es[0].isIntersecting; play(); }, { threshold: 0.2 }).observe(root);
 
     window.addEventListener('resize', () => render(false));
     render(false);
@@ -300,7 +306,7 @@
     document.querySelectorAll('.ftab').forEach(x => x.classList.toggle('is-active', x === b));
     const f = b.dataset.filter;
     let n = 0;
-    document.querySelectorAll('.case').forEach(c => { const show = f === 'all' || c.dataset.w.split(' ').includes(f); c.hidden = !show; if (show) n++; });
+    document.querySelectorAll('.case').forEach(c => { const show = f === 'all' || c.dataset.w.split(' ').includes(f); c.hidden = !show; if (show) { n++; c.classList.remove('is-swap'); void c.offsetWidth; c.classList.add('is-swap'); } });
     const cnt = document.querySelector('.ftabs__count b');
     if (cnt) cnt.textContent = n;
     buildCaseDots();
@@ -352,18 +358,24 @@
   });
   /* 제품 도입 문의 · 데모 신청: /api/inquiry 로 전송. 접수 기능이 연결되지 않으면(503 등) 접수 완료로 표시하지 않습니다. */
   document.querySelectorAll('form.form').forEach(f => {
+    f.setAttribute('novalidate', '');
     const btn = f.querySelector('button[type="submit"]');
     const note = document.createElement('p');
     note.className = 'form-note'; note.setAttribute('role', 'status'); note.style.cssText = 'margin-top:14px;font-size:14px;line-height:1.6';
     btn.after(note);
     f.addEventListener('submit', async e => {
       e.preventDefault();
-      if (!f.reportValidity()) return;
+      f.querySelectorAll('.is-invalid').forEach(x => x.classList.remove('is-invalid')); f.querySelectorAll('.err').forEach(x => x.remove());
+      const bad = [...f.querySelectorAll('[required]')].filter(el => el.type === 'checkbox' ? !el.checked : (!el.value.trim() || el.value === '선택하세요' || (el.type === 'email' && !el.checkValidity()) || (el.type === 'tel' && !/^[0-9+\-\s()]{9,}$/.test(el.value.trim()))));
+      if (bad.length) {
+        bad.forEach(el => { const box = el.closest('.field') || el.closest('.consent'); if (!box) return; box.classList.add('is-invalid'); const m = document.createElement('p'); m.className = 'err'; m.textContent = el.type === 'checkbox' ? '개인정보 수집·이용에 동의해 주세요.' : (el.value.trim() && (el.type === 'email' || el.type === 'tel') ? '올바른 형식으로 입력해 주세요.' : '필수 입력 항목입니다.'); box.appendChild(m); });
+        note.textContent = ''; bad[0].focus(); return;
+      }
       const fields = {};
       f.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => { if (el.type !== 'checkbox' && el.type !== 'radio' && el.value && el.value !== '선택하세요') fields[el.id] = el.value; });
       const t = f.querySelector('input[type="radio"]:checked'); if (t) fields.time = t.nextElementSibling ? t.nextElementSibling.textContent : '';
       const w = [...f.querySelectorAll('.opts input[type="checkbox"]:checked')].map(c => c.nextElementSibling.textContent); if (w.length) fields.waves = w;
-      btn.disabled = true; note.style.color = '';
+      btn.disabled = true; btn.classList.add('is-loading'); note.style.color = '';
       note.textContent = '전송 중입니다…';
       try {
         const r = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: location.pathname.includes('demo') ? 'demo' : 'inquiry', fields, consent: true }) });
@@ -373,8 +385,44 @@
         note.style.color = '#c0392b';
         note.textContent = '현재 문의 접수 기능을 준비 중이라 전송되지 않았습니다. 입력하신 내용은 저장되지 않았습니다.';
       }
-      btn.disabled = false;
+      btn.disabled = false; btn.classList.remove('is-loading');
     });
+    f.addEventListener('input', e => { const b = e.target.closest('.field, .consent'); if (b && b.classList.contains('is-invalid')) { b.classList.remove('is-invalid'); b.querySelector('.err')?.remove(); } });
+    f.addEventListener('change', e => { const b = e.target.closest('.field, .consent'); if (b && b.classList.contains('is-invalid')) { b.classList.remove('is-invalid'); b.querySelector('.err')?.remove(); } });
   });
   document.querySelectorAll('[data-todo]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); say(a.dataset.todo); }));
+
+  /* ---------- 헤더: ESC · 바깥 클릭 · 링크 클릭 시 닫기 / 접근성 상태 ---------- */
+  const hd = document.getElementById('site-header'), mb = hd && hd.querySelector('.menu-btn');
+  if (hd && mb) {
+    mb.setAttribute('aria-expanded', 'false');
+    const closeAll = () => { hd.classList.remove('is-open', 'is-mega'); document.body.style.overflow = ''; mb.setAttribute('aria-expanded', 'false'); hd.querySelector('.lang')?.classList.remove('is-open'); };
+    mb.addEventListener('click', () => mb.setAttribute('aria-expanded', hd.classList.contains('is-open')));
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAll(); });
+    document.addEventListener('click', e => { if (hd.classList.contains('is-open') && !e.target.closest('.mnav') && !e.target.closest('.menu-btn')) closeAll(); });
+    hd.querySelector('.mnav')?.addEventListener('click', e => { const a = e.target.closest('a'); if (a && a.getAttribute('href') !== '#') closeAll(); });
+    addEventListener('resize', () => { if (innerWidth > 1024) closeAll(); });
+  }
+
+  /* ---------- 블로그: 카테고리 버튼 → 실제 게시글 필터링 ---------- */
+  const bgrid = document.querySelector('.blog-grid'), bchips = document.querySelector('[data-chips]');
+  if (bgrid && bchips) {
+    const bempty = document.createElement('p'); bempty.className = 'list-empty'; bempty.textContent = '해당 카테고리의 게시글이 아직 없습니다.'; bempty.hidden = true; bgrid.after(bempty);
+    bchips.addEventListener('click', e => {
+      const chip = e.target.closest('.chip'); if (!chip) return;
+      const cat = chip.textContent.trim(); let n = 0;
+      bgrid.querySelectorAll('.bcard').forEach(c => {
+        const ok = cat === '전체' || (c.querySelector('.meta span')?.textContent.trim() === cat);
+        c.hidden = !ok;
+        if (ok) { n++; c.classList.remove('is-swap'); void c.offsetWidth; c.classList.add('is-swap'); }
+      });
+      bempty.hidden = n > 0;
+    });
+  }
+
+  /* ---------- 연결되지 않은 링크(#)는 이동하지 않고 안내 ---------- */
+  document.querySelectorAll('a[href="#"]:not([data-todo])').forEach(a => {
+    if (a.closest('[data-chips]') || a.classList.contains('is-active') || a.closest('.sub-tabs') && a.classList.contains('is-active')) return;
+    a.addEventListener('click', e => { e.preventDefault(); say('준비 중인 기능입니다.'); });
+  });
 })();

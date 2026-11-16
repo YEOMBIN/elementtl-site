@@ -1272,3 +1272,70 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .beam-l.is-on > circle { filter: drop-shadow(0 0 10px var(--c)) drop-shadow(0 0 22px var(--c)); }
 .w-panel { transition: none; }
 @media (prefers-reduced-motion: reduce) { .w-tab { transition: none; } }
+
+/* =========================================================
+   UX 고도화 (2026-11-17) — 공통 모션: 버튼 .3s · 카드 .4s · 전환 .5s · ease-out
+   ========================================================= */
+[hidden] { display: none !important; }
+@keyframes uxFade { from { opacity: 0; transform: translateY(14px); } }
+/* 버튼 */
+.btn { transition: background-color 0.3s ease-out, border-color 0.3s ease-out, color 0.3s ease-out, box-shadow 0.3s ease-out, transform 0.3s ease-out; }
+.btn svg, .link-more svg, .car-all svg { transition: transform 0.3s ease-out; }
+.btn:hover svg, .link-more:hover svg, .car-all:hover svg { transform: translateX(4px); }
+.btn:active { transform: scale(0.98); }
+.btn:focus-visible, .link-more:focus-visible, .chip:focus-visible, .lnb a:focus-visible { outline: 2px solid #006BFF; outline-offset: 3px; }
+.btn--primary:hover, .btn--navy:hover { background: #006BFF; }
+.btn.is-loading { pointer-events: none; opacity: 0.85; }
+.btn.is-loading::after { content: ""; width: 16px; height: 16px; margin-left: 4px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: uxSpin 0.7s linear infinite; }
+@keyframes uxSpin { to { transform: rotate(360deg); } }
+/* 필터 칩 / 지역 버튼 */
+.chip { transition: background-color 0.3s ease-out, border-color 0.3s ease-out, color 0.3s ease-out, transform 0.3s ease-out; }
+@media (hover: hover) and (pointer: fine) { .chip:not(.is-active):hover { border-color: var(--navy-900); color: var(--ink-900); background: var(--paper); } }
+.chip:active { transform: scale(0.97); }
+/* 클릭 가능한 카드: 이미지 미세 확대 + 화살표 반응 / 정보 카드는 이미지 확대만 */
+.app img, .bcard__img img, .press-row__img img, .scard__img img { transition: transform 0.45s ease-out; }
+.app:hover img { transform: scale(1.03); }
+.bcard:hover .bcard__img img { transform: scale(1.03); }
+.press-row__img { overflow: hidden; }
+.press-row__img img { transform-origin: center; }
+.scard:hover .scard__img img { transform: scale(1.03); }
+.press-row .round-go { transition: background-color 0.35s ease-out, border-color 0.35s ease-out, color 0.35s ease-out; }
+.press-row .round-go svg, .bcard .go svg, .ncard__go svg { transition: transform 0.35s ease-out; }
+@media (hover: hover) and (pointer: fine) {
+  .press-row:hover .press-row__img img { transform: scale(1.03); }
+  .press-row:hover .round-go { background: #006BFF; border-color: #006BFF; color: var(--white); }
+  .press-row:hover .round-go svg { transform: translateX(3px); }
+  .press-row h3 a { transition: color 0.3s ease-out; } .press-row:hover h3 a { color: #006BFF; }
+  .bcard:hover .go svg { transform: translate(2px, -2px); }
+  .ncard:hover .ncard__go svg { transform: translateX(3px); }
+  .ccard:not(.is-active):hover { background: #e9edf5; }
+}
+.ccard { transition: background-color 0.35s ease-out, color 0.35s ease-out; }
+/* 목록 전환 (필터·검색 시 부드럽게) */
+.clinic-list.is-swap .ccard, .bcard.is-swap, .case.is-swap { animation: uxFade 0.45s ease-out backwards; }
+/* NEWS 캐러셀: 가운데 카드 강조 / 나머지 약하게 */
+.ncard { transition: opacity 0.45s ease-out, transform 0.45s ease-out, background-color 0.35s ease-out, color 0.35s ease-out, box-shadow 0.45s ease-out; }
+.ncard:not(.is-center) { opacity: 0.72; }
+.ncard.is-center { transform: scale(1.02); }
+.ncard:hover { opacity: 1; }
+.ncard.is-center:hover { transform: translateY(-12px) scale(1.02); }
+/* 지도 핀 강조 */
+.kmap__pin:hover .kmap__pin-in, .kmap__pin:focus-visible .kmap__pin-in, .kmap__pin.is-sel .kmap__pin-in { transform: scale(1.12); }
+/* 입력 필드 / 폼 */
+.field input, .field select, .field textarea { transition: border-color 0.3s ease-out, box-shadow 0.3s ease-out, background-color 0.3s ease-out; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: #006BFF; box-shadow: 0 0 0 4px rgba(0, 107, 255, 0.14); }
+.field.is-invalid input, .field.is-invalid select, .field.is-invalid textarea { border-color: #d64545; box-shadow: 0 0 0 4px rgba(214, 69, 69, 0.1); }
+.consent.is-invalid { border-color: #d64545; }
+.err { margin-top: 8px; font-size: 13px; line-height: 1.5; color: #d64545; animation: uxFade 0.3s ease-out backwards; }
+.opt span { transition: background-color 0.3s ease-out, border-color 0.3s ease-out, color 0.3s ease-out; }
+/* 헤더: GNB 호버 밑줄, 모바일 메뉴 열림/닫힘 */
+.gnb > li > a::before { content: ""; position: absolute; left: 0; bottom: 24px; width: 24px; height: 2px; background: var(--blue-500); transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease-out; }
+.gnb > li:hover > a::before { transform: scaleX(1); }
+@media (max-width: 1024px) {
+  .mnav { transform: translateY(-8px); transition: opacity 0.35s ease-out, visibility 0.35s, transform 0.35s ease-out; }
+  .site-header.is-open .mnav { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn, .btn svg, .chip, .app img, .bcard__img img, .press-row__img img, .scard__img img, .ncard, .ccard, .field input, .field select, .field textarea, .mnav, .gnb > li > a::before { transition: none !important; }
+  .clinic-list.is-swap .ccard, .bcard.is-swap, .case.is-swap, .err, .btn.is-loading::after { animation: none !important; }
+}
