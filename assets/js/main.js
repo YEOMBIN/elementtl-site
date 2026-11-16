@@ -90,6 +90,9 @@
     f.innerHTML = `<a class="q-item" href="${BLOG}" target="_blank" rel="noopener" aria-label="네이버 블로그"><span class="q-ic"><img src="assets/img/quick-blog.png" alt="" width="26" height="24"></span><span class="q-tx">네이버 블로그</span></a><a class="q-item" href="#" data-todo="인스타그램 계정은 연결 예정입니다." aria-label="인스타그램"><span class="q-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z"/><circle cx="12" cy="12" r="4"/><path d="M17.3 6.7h.01"/></svg></span><span class="q-tx">인스타그램</span></a><a class="q-item" href="inquiry.html" aria-label="제품 도입 문의"><span class="q-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg></span><span class="q-tx">제품 도입 문의</span></a><a class="q-item quick__top" href="#top" aria-label="TOP"><span class="q-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V6M6 12l6-6 6 6"/></svg></span><span class="q-tx">TOP</span></a>`;
     f.querySelector('.quick__top').addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
     document.body.appendChild(f);
+    /* 호버 시 [아이콘+텍스트]가 버튼 안에서 좌우 여백이 같도록 항목별 확장 폭을 텍스트 길이에 맞춰 계산 */
+    const fit = () => f.querySelectorAll('.q-item').forEach(el => el.style.setProperty('--qe', (el.querySelector('.q-ic').offsetWidth + el.querySelector('.q-tx').offsetWidth) + 'px'));
+    fit(); addEventListener('resize', fit); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
   }
 
   /* ---------- Laser line field (original graphic) ---------- */
