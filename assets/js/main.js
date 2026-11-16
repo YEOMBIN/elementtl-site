@@ -74,7 +74,7 @@
         <div class="ft-top">
           <div>
             <a class="logo" href="index.html" aria-label="엘레멘트티엘 홈"><img src="assets/img/logo-white.png" alt="엘레멘트티엘"></a>
-            <p class="ft-info"><span>공식 대리점 와이앤와이메디칼 주식회사 · 대표자 유종화 · 사업자등록번호 399-88-03448</span><br><span>주소 서울특별시 영등포구 양평로 157, 17층 1702호(양평동5가, 선유도 투웨니퍼스트밸리)</span><br><span>제조 엘레메닉</span><br><span>의료기기 허가번호 [입력 예정] · 의료기기 광고심의필 [번호]</span></p>
+            <p class="ft-info"><span>공식 대리점 와이앤와이메디칼 주식회사 · 대표자 유종화 · 사업자등록번호 399-88-03448</span><br><span>주소 서울특별시 영등포구 양평로 157, 17층 1702호(양평동5가, 선유도 투웨니퍼스트밸리)</span><br><span>제조 엘레메닉</span></p>
           </div>
           <div class="ft-links"><a href="#" data-todo="개인정보처리방침은 확정 후 게시됩니다.">개인정보처리방침</a><a href="#" data-todo="이용약관은 확정 후 게시됩니다.">이용약관</a><a href="inquiry.html">제품 도입 문의</a><a href="${BLOG}" target="_blank" rel="noopener">Blog</a><a href="#" data-todo="인스타그램 계정은 연결 예정입니다.">Instagram</a></div>
         </div>
@@ -299,7 +299,20 @@
   let tt;
   const say = msg => { toast.textContent = msg; toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('is-on'), 2600); };
   /* 검색 폼 등 문의 외 폼 */
-  document.querySelectorAll('form:not(.form)').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); if (!f.closest('.clinic-filter')) say('검색 기능은 준비 중입니다.'); }));
+  document.querySelectorAll('form:not(.form)').forEach(f => { if (f.dataset.live) return; f.addEventListener('submit', e => { e.preventDefault(); if (!f.closest('.clinic-filter')) say('검색 기능은 준비 중입니다.'); }); });
+  /* 보도자료 · 학회&전시 검색: 제목/내용 기준으로 목록을 거릅니다 */
+  document.querySelectorAll('form[data-live]').forEach(f => {
+    const list = document.getElementById(f.dataset.live === 'press' ? 'press-list' : 'sched'); if (!list) return;
+    const items = [...list.children].filter(el => el.dataset.title);
+    const empty = document.createElement('p'); empty.className = 'list-empty'; empty.textContent = '검색 결과가 없습니다.'; empty.hidden = true; list.after(empty);
+    const run = () => {
+      const q = f.querySelector('input').value.trim().toLowerCase(), by = f.querySelector('select').selectedIndex === 1 ? 'body' : 'title';
+      let n = 0; items.forEach(el => { const ok = !q || (el.dataset[by] || '').toLowerCase().includes(q); el.hidden = !ok; if (ok) n++; });
+      empty.hidden = n > 0;
+    };
+    f.addEventListener('submit', e => { e.preventDefault(); run(); });
+    f.querySelector('input').addEventListener('input', run);
+  });
   /* 제품 도입 문의 · 데모 신청: /api/inquiry 로 전송. 접수 기능이 연결되지 않으면(503 등) 접수 완료로 표시하지 않습니다. */
   document.querySelectorAll('form.form').forEach(f => {
     const btn = f.querySelector('button[type="submit"]');

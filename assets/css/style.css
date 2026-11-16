@@ -1158,3 +1158,13 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .site-header.is-scrolled .hd, .site-header.is-open .hd { background: rgba(0, 4, 15, 0.86); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
   .site-header .hd { position: relative; z-index: 1; transition: background 0.5s var(--ease); }
 }
+
+/* 보도자료·NEWS 카드: 긴 기사 제목으로 카드가 늘어나지 않도록 줄 수 제한 / 이벤트 카드 */
+.ncard h3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.ncard__img--ev { display: flex; flex-direction: column; justify-content: center; gap: 14px; padding: 0 36px; background: var(--navy-900); color: var(--white); }
+.ncard__img--ev b { font-family: var(--font-en); font-weight: 300; font-size: 40px; line-height: 1.05; letter-spacing: -0.01em; }
+.ncard__img--ev span { font-family: var(--font-en); font-size: 14px; color: var(--blue-200); }
+.press-row h3 a { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.press-row > div > p:not(.overline):not(.meta) { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.list-empty { padding: 56px 0; text-align: center; color: var(--ink-400); }
+@media (max-width: 640px) { .ncard__img--ev { padding: 0 24px; } .ncard__img--ev b { font-size: 30px; } .press-row h3 a { -webkit-line-clamp: 4; } }

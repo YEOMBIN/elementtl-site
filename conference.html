@@ -42,11 +42,16 @@
         <nav class="sub-tabs"><a href="#" class="is-active">학회 &amp; 전시 스케줄</a><a href="#" data-todo="갤러리는 현장 사진 수령 후 공개됩니다.">학회 &amp; 전시 갤러리</a></nav>
         <div class="toolbar">
           <select class="year" aria-label="연도"><option>2026 Exhibition</option></select>
-          <form class="search" role="search"><select aria-label="검색 조건"><option>제목</option><option>내용</option></select><input type="search" placeholder="검색어를 입력하세요"><button aria-label="검색"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button></form>
+          <form class="search" role="search" data-live="sched"><select aria-label="검색 조건"><option>제목</option><option>내용</option></select><input type="search" placeholder="검색어를 입력하세요"><button aria-label="검색"><svg viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.3"/><path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></button></form>
         </div>
-        <div class="sched">
-          <article class="scard2"><div class="scard2__top"><span class="state state--up">예정</span><h3>코리아더마</h3></div><div class="scard2__bar"><div><small>Calendar.</small><b>2026.12.11 – 12.13</b></div></div></article>
+        <div class="sched" id="sched">
+          <article class="scard2" data-title="KOREADERMA 2026" data-body="코엑스 마곡 컨벤션센터 대한피부과의사회">
+            <div class="scard2__top"><span class="state state--up">예정 · UPCOMING</span><h3>KOREADERMA 2026</h3><p>코엑스 마곡 컨벤션센터 | 주최 대한피부과의사회</p><small>엘레멘트티엘 참여 예정</small></div>
+            <div class="scard2__bar"><div><small>Calendar.</small><b>2026.12.11 (금) – 12.13 (일)</b></div><a class="round-go" href="https://www.koreaderma.org/home" target="_blank" rel="noopener" aria-label="KOREADERMA 공식 홈페이지 열기"><svg viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg></a></div>
+          </article>
+          <!-- 행사 종료 후: 이 카드의 .state 를 state--end 로 바꾸고, 현장 사진·참여 내용을 갤러리 탭에 추가 -->
         </div>
+        <p class="sched-note" style="margin-top:32px;font-size:15px;line-height:1.7;color:var(--ink-600)"><b style="color:var(--ink-900)">KOREADERMA 2026 참여 예정</b><br>엘레멘트티엘이 2026년 12월 11일부터 13일까지 코엑스 마곡 컨벤션센터에서 개최되는 KOREADERMA 2026에 참여할 예정입니다.</p>
       </div>
     </section>
   </main>
