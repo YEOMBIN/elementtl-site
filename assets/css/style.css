@@ -1168,3 +1168,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 .press-row > div > p:not(.overline):not(.meta) { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .list-empty { padding: 56px 0; text-align: center; color: var(--ink-400); }
 @media (max-width: 640px) { .ncard__img--ev { padding: 0 24px; } .ncard__img--ev b { font-size: 30px; } .press-row h3 a { -webkit-line-clamp: 4; } }
+
+/* 데모 신청 양식: 모바일은 모든 항목 1열 (제품 도입 문의 페이지는 영향 없음) */
+@media (max-width: 640px) { .form--demo .frow { grid-template-columns: 1fr; } }

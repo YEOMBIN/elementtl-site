@@ -15,8 +15,11 @@ module.exports = async (req, res) => {
   if (!b || typeof b !== 'object' || b.website) return res.status(400).json({ ok: false, error: 'bad_request' });
   const type = b.type === 'demo' ? '데모 신청' : '제품 도입 문의';
   const f = b.fields && typeof b.fields === 'object' ? b.fields : {};
-  if (!f.name || !f.org || !f.tel || b.consent !== true) return res.status(400).json({ ok: false, error: 'missing_required' });
-  const rows = Object.keys(LABEL).filter(k => f[k]).map(k => `<tr><th align="left" style="padding:4px 12px 4px 0">${LABEL[k]}</th><td>${esc(Array.isArray(f[k]) ? f[k].join(', ') : f[k]).slice(0, 4000)}</td></tr>`).join('');
+  const isDemo = b.type === 'demo';
+  const clean = v => (typeof v === 'string' ? v.trim() : '');
+  if (!clean(f.name) || !clean(f.org) || !clean(f.tel) || (isDemo && !clean(f.region)) || b.consent !== true) return res.status(400).json({ ok: false, error: 'missing_required' });
+  const labels = isDemo ? { ...LABEL, region: '방문 지역', d1: '희망 날짜' } : LABEL;
+  const rows = Object.keys(isDemo ? { org: 1, name: 1, tel: 1, region: 1, d1: 1 } : LABEL).filter(k => f[k]).map(k => `<tr><th align="left" style="padding:4px 12px 4px 0">${labels[k]}</th><td>${esc(Array.isArray(f[k]) ? f[k].join(', ') : f[k]).slice(0, 4000)}</td></tr>`).join('');
   try {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
