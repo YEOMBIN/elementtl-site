@@ -1175,3 +1175,51 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 /* 학회·전시 카드 상단 포스터 이미지 */
 .scard2__img { aspect-ratio: 16 / 9; overflow: hidden; background: var(--navy-900); }
 .scard2__img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* KOREADERMA 2026 카드: 포스터 전체 배경 + 어두운 오버레이(기본) → 호버 시 포스터 드러남 (PC 마우스 환경에서만) */
+.scard2--poster { position: relative; isolation: isolate; aspect-ratio: 3 / 4; color: var(--white); background: #000; }
+.pc-bg { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: 80% 50%; transition: transform 0.4s ease-out; }
+.scard2--poster::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.65); transition: background 0.4s ease-out; }
+.pc-body { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; justify-content: space-between; padding: 44px; }
+.pc-body::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 70%; z-index: -1; background: linear-gradient(to top, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0)); opacity: 0; transition: opacity 0.4s ease-out; pointer-events: none; }
+.scard2--poster .state { align-self: flex-start; color: var(--white); border-color: rgba(255, 255, 255, 0.6); }
+.scard2--poster h3.pc-title { margin: 0; font-size: clamp(28px, 3.2vw, 46px); font-weight: 300; line-height: 1.2; }
+.scard2--poster .pc-date { display: block; margin-top: 18px; font-family: var(--font-en); font-size: clamp(17px, 1.6vw, 22px); font-weight: 400; }
+.scard2--poster .pc-main p { margin-top: 14px; color: rgba(255, 255, 255, 0.88); font-size: 16px; }
+.scard2--poster .pc-main small { display: block; margin-top: 8px; font-size: 14px; color: rgba(255, 255, 255, 0.72); }
+.scard2--poster .pc-main { text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35); transition: text-shadow 0.4s ease-out; }
+.pc-link { position: absolute; inset: 0; z-index: 3; }
+.pc-link .round-go { position: absolute; right: 32px; top: 40px; border-color: rgba(255, 255, 255, 0.6); color: var(--white); transition: background 0.4s ease-out; }
+.pc-link:focus-visible { outline: 2px solid var(--white); outline-offset: -4px; border-radius: 32px; }
+@media (hover: hover) and (pointer: fine) {
+  .scard2--poster:hover::before { background: rgba(0, 0, 0, 0.18); }
+  .scard2--poster:hover .pc-bg { transform: scale(1.03); }
+  .scard2--poster:hover .pc-body::after { opacity: 1; }
+  .scard2--poster:hover .pc-main { text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7); }
+  .scard2--poster:hover .pc-link .round-go { background: rgba(255, 255, 255, 0.16); }
+}
+@media (max-width: 1024px) { .scard2--poster { flex: 0 0 min(100%, 520px); } }
+@media (max-width: 640px) {
+  .scard2--poster { grid-column: 1 / -1; aspect-ratio: 4 / 5; }
+  .pc-body { padding: 28px 24px; }
+  .scard2--poster .state { padding: 6px 14px; font-size: 13px; }
+  .scard2--poster h3.pc-title { font-size: 30px; }
+  .scard2--poster .pc-date { font-size: 17px; }
+  .scard2--poster .pc-main p { font-size: 14px; }
+  .scard2--poster .pc-main small { display: block; font-size: 13px; }
+  .pc-link .round-go { right: 20px; top: 24px; width: 44px; height: 44px; }
+}
+/* 메인 NEWS 캐러셀의 동일 카드 */
+.ncard--poster { position: relative; isolation: isolate; background: #000; color: var(--white); }
+.ncard__bg { position: absolute; inset: 0; z-index: -2; background-size: cover; background-position: 80% 50%; transition: transform 0.4s ease-out; }
+.ncard--poster::before { content: ""; position: absolute; inset: 0; z-index: -1; background: rgba(0, 0, 0, 0.65); transition: background 0.4s ease-out; }
+.ncard--poster .ncard__cat, .ncard--poster.is-center .ncard__cat { color: var(--white); }
+.ncard--poster time, .ncard--poster.is-center time { color: rgba(255, 255, 255, 0.8); }
+.ncard--poster.is-center, .ncard--poster:hover { background: #000; }
+.ncard--poster .ncard__go { opacity: 1; background: transparent; border: 1px solid rgba(255, 255, 255, 0.6); }
+@media (hover: hover) and (pointer: fine) {
+  .ncard--poster:hover::before { background: rgba(0, 0, 0, 0.18); }
+  .ncard--poster:hover .ncard__bg { transform: scale(1.03); }
+  .ncard--poster:hover .ncard__txt { text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7); }
+}
+@media (max-width: 640px) { .pc-bg { background-position: 74% 50%; } }
