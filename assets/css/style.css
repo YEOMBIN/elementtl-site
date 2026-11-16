@@ -1256,3 +1256,19 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .pc-link .round-go { right: 16px; top: 16px; width: 40px; height: 40px; }
 }
 @media (min-width: 641px) { .scard2--poster h3.pc-title { font-size: clamp(22px, 2.1vw, 30px); } .scard2--poster .pc-date { font-size: clamp(14px, 1.2vw, 17px); } .scard2--poster .pc-main p { font-size: 14px; } .scard2--poster .pc-main small { font-size: 13px; } }
+
+/* 파장 선택 버튼: 532 → 755 → 1064 · 호버/활성 시 파장 컬러 · 활성 글로우 */
+.w-tab { --tc: var(--w1064); --tt: #fff; background: var(--navy-900); border-color: var(--white-10); transition: background-color 0.4s ease-out, border-color 0.4s ease-out, color 0.4s ease-out, box-shadow 0.4s ease-out, transform 0.4s ease-out; }
+.w-tab[data-w="532"] { --tc: var(--w532); }
+.w-tab[data-w="755"] { --tc: var(--w755); --tt: #0b1530; }
+.w-tab[data-w="1064"] { --tc: var(--w1064); }
+@media (hover: hover) and (pointer: fine) { .w-tab:hover { background: var(--tc); border-color: var(--tc); color: var(--tt); } .w-tab:hover span { color: var(--tt); } .w-tab:hover .dot { background: var(--tt); } }
+.w-tab.is-active { background: var(--tc); border-color: var(--tc); color: var(--tt); box-shadow: 0 0 28px color-mix(in srgb, var(--tc) 55%, transparent); transform: scale(1.02); }
+.w-tab.is-active span { color: var(--tt); opacity: 0.85; }
+.w-tab.is-active .dot { background: var(--tt); }
+.w-tab:active { transform: scale(0.98); }
+.w-tab:focus-visible { outline: 2px solid var(--white); outline-offset: 3px; }
+.beam-l > circle { transition: filter 0.6s var(--ease); }
+.beam-l.is-on > circle { filter: drop-shadow(0 0 10px var(--c)) drop-shadow(0 0 22px var(--c)); }
+.w-panel { transition: none; }
+@media (prefers-reduced-motion: reduce) { .w-tab { transition: none; } }

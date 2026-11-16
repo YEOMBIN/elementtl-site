@@ -135,7 +135,7 @@
     s += `<text x="6" y="${AX - 16}" fill="#fff" fill-opacity=".4" font-size="12" font-weight="600">VISIBLE</text><text x="${X(700) + 6}" y="${AX - 16}" fill="#fff" fill-opacity=".4" font-size="12" font-weight="600">NEAR-INFRARED</text><rect x="${X(700)}" y="${AX - 30}" width="1" height="24" fill="#fff" fill-opacity=".1"/>`;
     for (const l of [532, 755, 1064]) {
       const x = X(l);
-      s += `<g class="beam-l" data-w="${l}">
+      s += `<g class="beam-l" data-w="${l}" style="--c:${C[l]}">
         <g class="beam-gray"><rect x="${x - 1}" y="20" width="2" height="${AX - 20}" fill="url(#bGray)"/><circle cx="${x}" cy="${AX}" r="60" fill="url(#gGray)"/></g>
         <g class="beam-color"><rect x="${x - 1}" y="20" width="2" height="${AX - 20}" fill="url(#b${l})"/><circle cx="${x}" cy="${AX}" r="60" fill="url(#g${l})"/></g>
         <circle cx="${x}" cy="${AX}" r="6" fill="#fff"/>
@@ -150,22 +150,57 @@
     532: { med: 'KTP · Visible Green', t: '가시광선 영역의 가장 짧은 파장', d: '세 파장 중 가장 짧은 파장으로, 상대적으로 얕은 층에 작용합니다.' },
   };
   const panel = document.querySelector('.w-panel');
-  document.querySelectorAll('.w-tab').forEach(tab => tab.addEventListener('click', () => {
-    const w = tab.dataset.w;
-    document.querySelectorAll('.w-tab').forEach(t => t.classList.toggle('is-active', t === tab));
+  const tabs = [...document.querySelectorAll('.w-tab')];
+  const ORDER = [532, 755, 1064];
+  const panelHTML = w => { const d = WAVES[w]; return `<div class="w-panel__num"><span>${w}<small>nm</small></span></div><div class="w-panel__body"><p class="overline" style="color:var(--blue-200)">${d.med}</p><h3 class="h3">${d.t}</h3><p class="body">${d.d}</p></div>`; };
+  let current = null;
+  function select(w, animate = true) {
+    w = String(w);
+    if (current === w) return;
+    current = w;
+    tabs.forEach(t => { const on = t.dataset.w === w; t.classList.toggle('is-active', on); t.setAttribute('aria-selected', on); });
     document.querySelectorAll('.beam-l').forEach(g => {
       const on = g.dataset.w === w;
-      g.classList.toggle('is-on', on); // selected = color, others = grayscale (CSS crossfade)
+      g.classList.toggle('is-on', on); // selected = color + glow, others = grayscale (CSS crossfade)
       g.querySelector('.lbl').setAttribute('fill-opacity', on ? 1 : 0.4);
     });
     if (panel) {
-      const d = WAVES[w];
-      panel.innerHTML = `<div class="w-panel__num"><span>${w}<small>nm</small></span></div><div class="w-panel__body"><p class="overline" style="color:var(--blue-200)">${d.med}</p><h3 class="h3">${d.t}</h3><p class="body">${d.d}</p></div>`;
-      panel.removeAttribute('data-anim'); void panel.offsetWidth; panel.setAttribute('data-anim', '');
+      panel.innerHTML = panelHTML(w);
+      if (animate) { panel.removeAttribute('data-anim'); void panel.offsetWidth; panel.setAttribute('data-anim', ''); }
     }
-  }));
+  }
+  /* 설명 영역 높이 고정: 가장 긴 설명 기준 min-height (전환 시 레이아웃 흔들림 방지) */
+  function fitPanel() {
+    if (!panel) return;
+    const keep = current; panel.style.minHeight = '';
+    let max = 0;
+    ORDER.forEach(w => { panel.innerHTML = panelHTML(w); max = Math.max(max, panel.offsetHeight); });
+    panel.innerHTML = panelHTML(keep || 1064);
+    panel.style.minHeight = max + 'px';
+  }
+  /* 자동 순환 (532 → 755 → 1064, 4초) · 호버/클릭 시 일시정지(호버 해제 또는 마지막 클릭 6초 후 재개) · 탭 비활성/화면 밖 정지 */
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const tabsEl = document.querySelector('.w-tabs');
+  let timer = 0, hovering = false, lastClick = 0, inView = true;
+  const stop = () => { clearTimeout(timer); timer = 0; };
+  const schedule = delay => {
+    stop();
+    if (reduceMotion || hovering || document.hidden || !inView) return;
+    timer = setTimeout(() => { select(ORDER[(ORDER.indexOf(+current) + 1) % ORDER.length]); schedule(4000); }, delay);
+  };
+  tabs.forEach(tab => {
+    tab.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return; hovering = true; stop(); select(tab.dataset.w); });
+    tab.addEventListener('pointerleave', e => { if (e.pointerType !== 'mouse') return; hovering = false; schedule(Math.max(4000, 6000 - (Date.now() - lastClick))); });
+    tab.addEventListener('click', () => { lastClick = Date.now(); select(tab.dataset.w); schedule(6000); });
+  });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) stop(); else schedule(4000); });
+  if (tabsEl && 'IntersectionObserver' in window) new IntersectionObserver(es => { inView = es[0].isIntersecting; if (inView) schedule(4000); else stop(); }, { threshold: 0.2 }).observe(tabsEl);
   const firstTab = document.querySelector('.w-tab.is-active');
-  if (firstTab) firstTab.click();
+  select(firstTab ? firstTab.dataset.w : 1064, false);
+  fitPanel();
+  addEventListener('resize', fitPanel);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(fitPanel);
+  schedule(4000);
 
   /* ---------- Carousels ---------- */
   /* Infinite, centered carousel: [clones][originals][clones]; the active card sits at the viewport center
