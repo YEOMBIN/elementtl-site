@@ -74,9 +74,9 @@
         <div class="ft-top">
           <div>
             <a class="logo" href="index.html" aria-label="엘레멘트티엘 홈"><img src="assets/img/logo-white.png" alt="엘레멘트티엘"></a>
-            <p class="ft-info">공식 대리점 [상호] · 대표 [성명] · 사업자등록번호 [000-00-00000]<br>주소 [대리점 주소] · 제조 엘레메닉<br>의료기기 허가번호 [입력 예정] · 의료기기 광고심의필 [번호]</p>
+            <p class="ft-info"><span>공식 대리점 와이앤와이메디칼 주식회사 · 대표자 유종화 · 사업자등록번호 399-88-03448</span><br><span>주소 서울특별시 영등포구 양평로 157, 17층 1702호(양평동5가, 선유도 투웨니퍼스트밸리)</span><br><span>제조 엘레메닉</span><br><span>의료기기 허가번호 [입력 예정] · 의료기기 광고심의필 [번호]</span></p>
           </div>
-          <div class="ft-links"><a href="#">개인정보처리방침</a><a href="#">이용약관</a><a href="${BLOG}" target="_blank" rel="noopener">Blog</a><a href="#">Instagram</a><a href="#">KakaoTalk</a></div>
+          <div class="ft-links"><a href="#" data-todo="개인정보처리방침은 확정 후 게시됩니다.">개인정보처리방침</a><a href="#" data-todo="이용약관은 확정 후 게시됩니다.">이용약관</a><a href="inquiry.html">제품 도입 문의</a><a href="${BLOG}" target="_blank" rel="noopener">Blog</a><a href="#" data-todo="인스타그램 계정은 연결 예정입니다.">Instagram</a></div>
         </div>
       </div>
       <div class="ft-mark" aria-hidden="true"><img src="assets/img/logo-white.png" alt=""></div>
@@ -88,7 +88,7 @@
     const f = document.createElement('nav');
     f.className = 'quick';
     f.setAttribute('aria-label', '퀵 메뉴');
-    f.innerHTML = `<a href="${BLOG}" target="_blank" rel="noopener" aria-label="블로그" title="블로그"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg></a><a href="#" data-todo="인스타그램 주소 연결 예정입니다." aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z"/><circle cx="12" cy="12" r="4"/><path d="M17.3 6.7h.01"/></svg></a><a href="#" data-todo="카카오톡 채널 주소 연결 예정입니다." aria-label="카카오톡" title="카카오톡"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4C7 4 3 7.1 3 11c0 2.5 1.7 4.7 4.2 6L6.3 20.5l3.9-2.5c.6.1 1.2.1 1.8.1 5 0 9-3.1 9-7s-4-7.1-9-7.1z"/></svg></a><a href="#top" class="quick__top" aria-label="맨 위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V6M6 12l6-6 6 6"/></svg><b>TOP</b></a>`;
+    f.innerHTML = `<a href="${BLOG}" target="_blank" rel="noopener" aria-label="블로그" title="블로그"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M8 8.5h8M8 12h8M8 15.5h5"/></svg></a><a href="#" data-todo="인스타그램 주소 연결 예정입니다." aria-label="인스타그램" title="인스타그램"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z"/><circle cx="12" cy="12" r="4"/><path d="M17.3 6.7h.01"/></svg></a><a href="inquiry.html" aria-label="제품 도입 문의" title="제품 도입 문의"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18v12H3z"/><path d="M3 7l9 6 9-6"/></svg></a><a href="#top" class="quick__top" aria-label="맨 위로"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20V6M6 12l6-6 6 6"/></svg><b>TOP</b></a>`;
     f.querySelector('.quick__top').addEventListener('click', e => { e.preventDefault(); window.scrollTo({ top: 0, behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
     document.body.appendChild(f);
   }
@@ -298,6 +298,33 @@
   document.body.appendChild(toast);
   let tt;
   const say = msg => { toast.textContent = msg; toast.classList.add('is-on'); clearTimeout(tt); tt = setTimeout(() => toast.classList.remove('is-on'), 2600); };
-  document.querySelectorAll('form').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); say('시안 페이지입니다. 실제 전송 기능은 개발 단계에서 연결됩니다.'); }));
+  /* 검색 폼 등 문의 외 폼 */
+  document.querySelectorAll('form:not(.form)').forEach(f => f.addEventListener('submit', e => { e.preventDefault(); if (!f.closest('.clinic-filter')) say('검색 기능은 준비 중입니다.'); }));
+  /* 제품 도입 문의 · 데모 신청: /api/inquiry 로 전송. 접수 기능이 연결되지 않으면(503 등) 접수 완료로 표시하지 않습니다. */
+  document.querySelectorAll('form.form').forEach(f => {
+    const btn = f.querySelector('button[type="submit"]');
+    const note = document.createElement('p');
+    note.className = 'form-note'; note.setAttribute('role', 'status'); note.style.cssText = 'margin-top:14px;font-size:14px;line-height:1.6';
+    btn.after(note);
+    f.addEventListener('submit', async e => {
+      e.preventDefault();
+      if (!f.reportValidity()) return;
+      const fields = {};
+      f.querySelectorAll('input[id], select[id], textarea[id]').forEach(el => { if (el.type !== 'checkbox' && el.type !== 'radio' && el.value && el.value !== '선택하세요') fields[el.id] = el.value; });
+      const t = f.querySelector('input[type="radio"]:checked'); if (t) fields.time = t.nextElementSibling ? t.nextElementSibling.textContent : '';
+      const w = [...f.querySelectorAll('.opts input[type="checkbox"]:checked')].map(c => c.nextElementSibling.textContent); if (w.length) fields.waves = w;
+      btn.disabled = true; note.style.color = '';
+      note.textContent = '전송 중입니다…';
+      try {
+        const r = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: location.pathname.includes('demo') ? 'demo' : 'inquiry', fields, consent: true }) });
+        if (r.ok) { note.textContent = '문의가 접수되었습니다. 담당자가 확인 후 연락드리겠습니다.'; f.reset(); }
+        else throw new Error(r.status);
+      } catch (err) {
+        note.style.color = '#c0392b';
+        note.textContent = '현재 문의 접수 기능을 준비 중이라 전송되지 않았습니다. 입력하신 내용은 저장되지 않았습니다.';
+      }
+      btn.disabled = false;
+    });
+  });
   document.querySelectorAll('[data-todo]').forEach(a => a.addEventListener('click', e => { e.preventDefault(); say(a.dataset.todo); }));
 })();
