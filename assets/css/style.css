@@ -1141,16 +1141,26 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .clinic-split .map { display: none; }
 }
 
-/* Quick menu (Figma C-2): 블로그 · 인스타그램 · 카카오톡 · TOP — 기존 문의 플로팅 버튼 대체 */
+/* Quick menu: 로고 → 텍스트 순서, PC 호버 시 왼쪽으로 Pill 확장 (오른쪽 끝 고정) */
 .float-cta { display: none; }
-.quick { position: fixed; right: 40px; bottom: 48px; z-index: 40; display: flex; flex-direction: column; gap: 12px; }
-.quick a { width: 48px; height: 48px; border-radius: 50%; background: var(--navy-900); border: 1px solid rgba(255, 255, 255, 0.18); box-shadow: 0 4px 16px rgba(0, 4, 15, 0.24); color: var(--white); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; transition: transform 0.4s var(--ease), background 0.4s var(--ease); }
-.quick a:hover { transform: translateY(-3px); background: var(--blue-500); }
-.quick svg { width: 20px; height: 20px; }
-.quick__top svg { width: 16px; height: 16px; }
-.quick b { font-family: var(--font-en); font-size: 9px; font-weight: 700; line-height: 1; }
-@media (max-width: 1024px) { .quick { right: 32px; bottom: 36px; gap: 10px; } .quick a { width: 44px; height: 44px; } .quick svg { width: 18px; height: 18px; } .quick__top svg { width: 14px; height: 14px; } }
-@media (max-width: 640px) { .quick { right: 16px; bottom: 24px; gap: 8px; } .quick a { width: 40px; height: 40px; } .quick svg { width: 16px; height: 16px; } .quick__top svg { width: 13px; height: 13px; } .quick b { font-size: 8px; } body { padding-bottom: 0; } }
+.quick { --qs: 50px; --qe: 170px; position: fixed; right: 40px; bottom: 48px; z-index: 40; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.q-item { display: flex; align-items: center; width: var(--qs); height: var(--qs); border-radius: calc(var(--qs) / 2); overflow: hidden; background: var(--navy-900); color: var(--white); box-shadow: 0 4px 16px rgba(0, 4, 15, 0.24); -webkit-tap-highlight-color: transparent; transition: width 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), background-color 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.2s ease-out; }
+.q-ic { flex: 0 0 var(--qs); width: var(--qs); height: var(--qs); display: flex; align-items: center; justify-content: center; }
+.q-ic svg { width: 20px; height: 20px; }
+.q-ic img { display: block; width: 26px; height: auto; }
+.q-tx { flex: none; padding-right: 22px; white-space: nowrap; font-size: 14px; font-weight: 500; letter-spacing: -0.01em; opacity: 0; transform: translateX(-16px); clip-path: inset(0 100% 0 0); transition: opacity 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), transform 0.4s cubic-bezier(0.22, 0.61, 0.36, 1), clip-path 0.4s cubic-bezier(0.22, 0.61, 0.36, 1); }
+.q-item:focus-visible { outline: 2px solid var(--white); outline-offset: 2px; }
+.q-item:focus-visible, .q-item:active { width: var(--qe); background-color: #006BFF; }
+.q-item:focus-visible .q-tx { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+.q-item:active { transform: scale(0.96); }
+@media (hover: hover) and (pointer: fine) {
+  .q-item:hover { width: var(--qe); background-color: #006BFF; }
+  .q-item:hover .q-tx { opacity: 1; transform: none; clip-path: inset(0 0 0 0); }
+}
+@media (hover: none) { .q-item:active { width: var(--qs); } }
+@media (max-width: 1024px) { .quick { --qs: 46px; right: 32px; bottom: 36px; gap: 10px; } .q-ic svg { width: 18px; height: 18px; } .q-ic img { width: 24px; } }
+@media (max-width: 640px) { .quick { --qs: 42px; right: 16px; bottom: 24px; gap: 8px; } .q-ic svg { width: 17px; height: 17px; } .q-ic img { width: 22px; } body { padding-bottom: 0; } }
+@media (prefers-reduced-motion: reduce) { .q-item, .q-tx { transition: none; } }
 
 /* 모바일 메뉴 잘림 수정: 헤더의 backdrop-filter가 fixed 메뉴의 기준 박스가 되어 헤더 높이만큼만 보이던 문제 — 블러를 .hd로 이동 (≤1024) */
 @media (max-width: 1024px) {
