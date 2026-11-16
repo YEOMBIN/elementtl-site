@@ -31,7 +31,6 @@
       </div>
       <div class="mega"><div class="mega__in">
         <div class="mega__quick">
-          <a href="product.html#download"><span><b>카탈로그 다운로드</b><small>의료진 전용 · PDF</small></span>${ARROW}</a>
           <a href="demo.html"><span><b>데모 신청</b><small>방문 시연 일정 조율</small></span>${ARROW}</a>
         </div>
       </div></div>
