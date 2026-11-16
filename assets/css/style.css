@@ -1171,3 +1171,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* 데모 신청 양식: 모바일은 모든 항목 1열 (제품 도입 문의 페이지는 영향 없음) */
 @media (max-width: 640px) { .form--demo .frow { grid-template-columns: 1fr; } }
+
+/* 학회·전시 카드 상단 포스터 이미지 */
+.scard2__img { aspect-ratio: 16 / 9; overflow: hidden; background: var(--navy-900); }
+.scard2__img img { width: 100%; height: 100%; object-fit: cover; }
