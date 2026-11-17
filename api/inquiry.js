@@ -4,6 +4,7 @@
    하나라도 설정되지 않으면 503(접수 비활성화)을 반환하며 접수 완료로 처리하지 않습니다.
    입력 내용은 DB·로그에 저장하지 않고 이메일로만 전달합니다. */
 const nodemailer = require('nodemailer');
+const addressparser = require('nodemailer/lib/addressparser');
 
 const FORMS = {
   inquiry: {
@@ -82,9 +83,15 @@ module.exports = async (req, res) => {
 
   try {
     const port = Number(SMTP_PORT);
+    /* 발신자: 실제 SMTP 발신 주소(MAIL_FROM)는 유지하고, 표시 이름만 "[엘레멘트티엘] 제품 도입 문의_신청자명"으로 설정.
+       고객이 입력한 이메일은 발신 주소로 쓰지 않고 replyTo 로만 사용 */
+    const fromAddress = ((addressparser(oneLine(MAIL_FROM))[0]) || {}).address;
+    if (!fromAddress) return res.status(503).json({ ok: false, error: 'not_configured' });
+    const label = type === 'demo' ? '데모 신청' : '제품 도입 문의';
+    const displayName = ('[엘레멘트티엘] ' + label + '_' + v.name).replace(/["<>\\]/g, '').slice(0, 80);
     const transporter = nodemailer.createTransport({ host: oneLine(SMTP_HOST), port, secure: port === 465, auth: { user: SMTP_USER, pass: SMTP_PASSWORD }, connectionTimeout: 10000, greetingTimeout: 10000, socketTimeout: 15000 });
     await transporter.sendMail({
-      from: oneLine(MAIL_FROM),
+      from: { name: displayName, address: fromAddress },
       to: MAIL_TO.split(',').map(oneLine).filter(Boolean),
       replyTo: v.mail || undefined,
       subject: form.subject,
