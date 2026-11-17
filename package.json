@@ -1,0 +1,11 @@
+{
+  "name": "elementtl-site",
+  "private": true,
+  "description": "엘레멘트티엘 홈페이지 (정적 HTML + Vercel Serverless 문의 API)",
+  "dependencies": {
+    "nodemailer": "^6.9.16"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -359,6 +359,8 @@
   /* 제품 도입 문의 · 데모 신청: /api/inquiry 로 전송. 접수 기능이 연결되지 않으면(503 등) 접수 완료로 표시하지 않습니다. */
   document.querySelectorAll('form.form').forEach(f => {
     f.setAttribute('novalidate', '');
+    const t0 = Date.now();
+    const hp = document.createElement('input'); hp.type = 'text'; hp.name = 'website'; hp.tabIndex = -1; hp.autocomplete = 'off'; hp.setAttribute('aria-hidden', 'true'); hp.style.cssText = 'position:absolute;left:-9999px;width:1px;height:1px;opacity:0'; f.appendChild(hp); // 스팸 방지용 허니팟
     const btn = f.querySelector('button[type="submit"]');
     const note = document.createElement('p');
     note.className = 'form-note'; note.setAttribute('role', 'status'); note.style.cssText = 'margin-top:14px;font-size:14px;line-height:1.6';
@@ -378,12 +380,13 @@
       btn.disabled = true; btn.classList.add('is-loading'); note.style.color = '';
       note.textContent = '전송 중입니다…';
       try {
-        const r = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: location.pathname.includes('demo') ? 'demo' : 'inquiry', fields, consent: true }) });
+        const r = await fetch('/api/inquiry', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ type: location.pathname.includes('demo') ? 'demo' : 'inquiry', fields, website: hp.value, elapsed: Date.now() - t0, consent: true }) });
         if (r.ok) { note.textContent = '문의가 접수되었습니다. 담당자가 확인 후 연락드리겠습니다.'; f.reset(); }
         else throw new Error(r.status);
       } catch (err) {
         note.style.color = '#c0392b';
-        note.textContent = '현재 문의 접수 기능을 준비 중이라 전송되지 않았습니다. 입력하신 내용은 저장되지 않았습니다.';
+        const st = Number(err && err.message);
+        note.textContent = st === 429 ? '짧은 시간에 여러 번 제출되어 접수되지 않았습니다. 잠시 후 다시 시도해 주세요.' : st === 400 ? '입력 내용을 확인한 뒤 다시 시도해 주세요. (입력하신 내용은 그대로 유지됩니다)' : st === 502 ? '일시적인 오류로 접수되지 않았습니다. 잠시 후 다시 시도해 주세요. (입력하신 내용은 그대로 유지됩니다)' : '현재 문의 접수 기능을 준비 중이라 전송되지 않았습니다. 입력하신 내용은 저장되지 않았습니다.';
       }
       btn.disabled = false; btn.classList.remove('is-loading');
     });
