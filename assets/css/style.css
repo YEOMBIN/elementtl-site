@@ -1339,3 +1339,6 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   .btn, .btn svg, .chip, .app img, .bcard__img img, .press-row__img img, .scard__img img, .ncard, .ccard, .field input, .field select, .field textarea, .mnav, .gnb > li > a::before { transition: none !important; }
   .clinic-list.is-swap .ccard, .bcard.is-swap, .case.is-swap, .err, .btn.is-loading::after { animation: none !important; }
 }
+
+/* 임상 사례 카드: 쌓이는 동안에도 흐려지지 않도록 dim 오버레이 제거 */
+.cases.is-stack .case::after { content: none; display: none; }

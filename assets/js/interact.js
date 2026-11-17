@@ -63,7 +63,7 @@
     g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
   });
 
-  /* ---------- Clinical cards: stacking (PC) — sticky position, scrubbed dimming (both directions) ---------- */
+  /* ---------- Clinical cards: stacking (PC) — sticky position only (임상 사진이 흐려지지 않도록 dim 오버레이 제거) ---------- */
   const caseWrap = document.querySelector('.cases');
   if (caseWrap && !reduce && window.gsap && window.ScrollTrigger) {
     gsap.registerPlugin(ScrollTrigger);
@@ -75,11 +75,6 @@
         cards.forEach((c, i) => {
           c.style.setProperty('--stack-top', 120 + i * 18 + 'px');
           c.style.zIndex = i + 1;
-          c.style.setProperty('--dim', 0);
-          const next = cards[i + 1];
-          if (!next) return;
-          gsap.fromTo(c, { '--dim': 0 }, { '--dim': 1, ease: 'none', immediateRender: false,
-            scrollTrigger: { id: 'case-stack', trigger: next, start: 'top 85%', end: 'top ' + (120 + (i + 1) * 18) + 'px', scrub: 0.6 } });
         });
       };
       caseWrap.classList.add('is-stack');
