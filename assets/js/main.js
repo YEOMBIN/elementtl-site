@@ -64,8 +64,30 @@
     window.addEventListener('scroll', onScroll, { passive: true });
   }
 
-  /* ---------- Footer ---------- */
+  /* ---------- 공통 CTA 섹션 (메인 기준 · Footer 바로 위 · 고객지원 페이지 제외) ---------- */
   const footer = document.getElementById('site-footer');
+  if (footer && document.body.dataset.page !== 'support' && !document.getElementById('site-cta')) {
+    const cta = document.createElement('section');
+    cta.id = 'site-cta';
+    cta.className = 'section section--dark contact';
+    cta.innerHTML = `
+      <div class="laser"></div>
+      <div class="glow" style="width:1200px;height:700px;left:50%;transform:translateX(-50%);top:0"></div>
+      <div class="wrap reveal" style="position:relative">
+        <p class="overline">Professional Inquiry</p>
+        <h2>ELEMENT-TL Gen2.</h2>
+        <p class="h3">의료 현장을 위한 레이저 시스템</p>
+        <p class="body">제품 도입과 데모 일정은 전문 담당자가 안내합니다.</p>
+        <div class="contact__btns">
+          <a class="btn btn--primary" href="inquiry.html">제품 도입 문의 ${ARROW}</a>
+          <a class="btn btn--ghost" href="demo.html">데모 신청 ${ARROW}</a>
+          <a class="btn btn--ghost" href="clinics.html">도입 병원 찾기 ${ARROW}</a>
+        </div>
+      </div>`;
+    footer.parentNode.insertBefore(cta, footer);
+  }
+
+  /* ---------- Footer ---------- */
   if (footer) {
     footer.className = 'site-footer';
     footer.innerHTML = `
