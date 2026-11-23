@@ -1,14 +1,55 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "redirects": [
-    { "source": "/blog", "destination": "/blog.html", "permanent": true },
-    { "source": "/blog/", "destination": "/blog.html", "permanent": true },
-    { "source": "/blog/index.html", "destination": "/blog.html", "permanent": true },
-    { "source": "/blog/beard-sessions.html", "destination": "/blog.html", "permanent": true },
-    { "source": "/blog/gen2-three-wavelengths.html", "destination": "/blog.html", "permanent": true },
-    { "source": "/blog/redness-532.html", "destination": "/blog.html", "permanent": true }
+    {
+      "source": "/blog",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/index.html",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/beard-sessions.html",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/gen2-three-wavelengths.html",
+      "destination": "/blog.html",
+      "permanent": true
+    },
+    {
+      "source": "/blog/redness-532.html",
+      "destination": "/blog.html",
+      "permanent": true
+    }
   ],
   "headers": [
-    { "source": "/assets/(.*)", "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600" }] }
+    {
+      "source": "/assets/(js|css)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(img|video)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
+    }
   ]
 }
