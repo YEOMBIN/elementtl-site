@@ -2,3 +2,5 @@ User-agent: *
 Allow: /
 
 Sitemap: https://elementlaser.co.kr/sitemap.xml
+
+#DaumWebMasterTool:47433464322a1f8f09db4a7d5d8ec0170dc8fde5e3105269301824e215a37bca:4djnnmDYbaXJEU0i2qqWPQ==
